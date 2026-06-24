@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #f8f8fc;
+  --surface: #ffffff;
+  --ink: #0f0e1a;
+  --hairline: #e0ddef;
+  --muted: #6b6780;
+  --accent: #7b2fbe;
+  --accent-2: #e91e8c;
+  --accent-3: #2979ff;
+  --accent-gold: #ffb900;
+  --grad-start: #2979ff;
+  --grad-mid1: #7b2fbe;
+  --grad-mid2: #e91e8c;
+  --grad-mid3: #ff6d3b;
+  --grad-end: #ffb900;
+  --brand-grad: linear-gradient(90deg, var(--grad-start), var(--grad-mid1), var(--grad-mid2), var(--grad-mid3), var(--grad-end));
+  --font-display: "Georgia", "Times New Roman", serif;
+  --font-body: "Inter", "Segoe UI", system-ui, sans-serif;
+}
+
+:root[data-theme='dark'] {
+  --bg: #0d0c18;
+  --surface: #141324;
+  --ink: #f0eeff;
+  --hairline: #2a2840;
+  --muted: #9e9ab8;
+  --accent: #9b5fde;
+  --accent-2: #f04fa0;
+  --accent-3: #5299ff;
+  --accent-gold: #ffc933;
+  --grad-start: #5299ff;
+  --grad-mid1: #9b5fde;
+  --grad-mid2: #f04fa0;
+  --grad-mid3: #ff7a4a;
+  --grad-end: #ffc933;
+}
+
+@theme {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-accent-3: var(--accent-3);
+  --color-hairline: var(--hairline);
+  --color-muted: var(--muted);
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+}
+
+html {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  color-scheme: light;
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: var(--bg);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
