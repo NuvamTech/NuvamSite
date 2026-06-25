@@ -65,6 +65,7 @@ html {
   font-family: var(--font-body);
   color-scheme: light;
   min-height: 100%;
+  scroll-padding-top: 72px;
 }
 
 html[data-theme='dark'] {
@@ -100,6 +101,11 @@ textarea {
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
+}
+
+/* ── Section scroll offset for sticky header ────────────────────────── */
+section[id] {
+  scroll-margin-top: 72px;
 }
 
 .btn-primary {

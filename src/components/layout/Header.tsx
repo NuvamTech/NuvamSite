@@ -16,6 +16,11 @@ export function Header() {
   const [active,   setActive]   = useState<SectionId>('home');
   const drawerRef  = useRef<HTMLDivElement>(null);
 
+  /* ── Scroll to top on mount to prevent auto-scroll on refresh ───── */
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   /* ── Theme init ─────────────────────────────────────────────────── */
   useEffect(() => {
     const stored      = window.localStorage.getItem('nuvam-theme');
@@ -46,7 +51,7 @@ export function Header() {
       if (!el) return;
       const obs = new IntersectionObserver(
         ([entry]) => { if (entry.isIntersecting) setActive(id); },
-        { rootMargin: '-45% 0px -55% 0px', threshold: 0 },
+        { rootMargin: '-10% 0px -70% 0px', threshold: 0 },
       );
       obs.observe(el);
       observers.push(obs);
@@ -66,26 +71,34 @@ export function Header() {
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault();
     const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+    if (el) {
+      const headerHeight = id === 'home' ? 86 : 60;
+      const elementPosition = el.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerHeight;
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
     setMenuOpen(false);
   };
 
   return (
     <>
-      <header className="sticky top-0 z-30 border-b border-hairline/80 bg-bg/90 backdrop-blur-md">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-0 sm:px-6">
+      <header className="sticky top-0 z-30 border-b border-hairline/80 bg-bg/90 backdrop-blur-md mb-px">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-3 py-2 sm:px-6 sm:py-0.5">
 
           {/* Logo — no border, zero vertical padding */}
           <a
             href="#home"
             onClick={(e) => handleNavClick(e, 'home')}
-            className="flex items-center shrink-0"
+            className="flex items-center shrink-0 pl-3 md:pl-0"
             aria-label="NUVAM — back to top"
           >
             <img
               src="/logo.png"
               alt="NUVAM logo"
-              className="h-20 w-20 object-contain transition-transform duration-300 hover:scale-[1.05] drop-shadow-sm sm:h-24 sm:w-24"
+              className="h-16 w-16 object-contain transition-transform duration-300 hover:scale-[1.05] drop-shadow-sm sm:h-20 sm:w-20"
             />
           </a>
 
@@ -108,13 +121,13 @@ export function Header() {
           </nav>
 
           {/* Right actions */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-2">
             {/* Theme toggle */}
             <button
               type="button"
               onClick={toggleTheme}
               aria-label="Toggle colour theme"
-              className="relative flex h-9 w-9 items-center justify-center rounded-full border border-hairline bg-surface text-ink transition-all duration-200 hover:border-[var(--accent)] hover:text-[var(--accent)] sm:h-10 sm:w-10"
+              className="relative flex h-8 w-8 items-center justify-center rounded-full border border-hairline bg-surface text-ink transition-all duration-200 hover:border-[var(--accent)] hover:text-[var(--accent)] sm:h-9 sm:w-9"
             >
               {theme === 'light' ? (
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -137,7 +150,7 @@ export function Header() {
               onClick={() => setMenuOpen((o) => !o)}
               aria-label={menuOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={menuOpen}
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-hairline bg-surface text-ink transition-all duration-200 hover:border-[var(--accent)] hover:text-[var(--accent)] md:hidden sm:h-10 sm:w-10"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-hairline bg-surface text-ink transition-all duration-200 hover:border-[var(--accent)] hover:text-[var(--accent)] md:hidden sm:h-9 sm:w-9"
             >
               <span className="relative flex h-4 w-5 flex-col justify-between">
                 <span
@@ -192,19 +205,19 @@ export function Header() {
         />
 
         {/* Drawer header */}
-        <div className="flex items-center justify-between px-5 pt-4 pb-4 border-b border-hairline/50">
+        <div className="flex items-center justify-between px-5 pt-3 pb-3 border-b border-hairline/50">
           <a
             href="#home"
             onClick={(e) => handleNavClick(e, 'home')}
             className="flex items-center"
           >
-            <img src="/logo.png" alt="NUVAM" className="h-16 w-16 object-contain" />
+            <img src="/logo.png" alt="NUVAM" className="h-12 w-12 object-contain" />
           </a>
           <button
             type="button"
             onClick={() => setMenuOpen(false)}
             aria-label="Close navigation"
-            className="flex h-8 w-8 items-center justify-center rounded-full border border-hairline text-muted transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+            className="flex h-7 w-7 items-center justify-center rounded-full border border-hairline text-muted transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
           >
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
               <path d="M1 1l10 10M11 1L1 11" />
@@ -228,7 +241,7 @@ export function Header() {
                   style={{ transitionDelay: menuOpen ? `${i * 40}ms` : '0ms' }}
                 >
                   <span
-                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-hairline text-[10px] font-medium brand-grad-text"
+                    className="flex h-5 w-5 shrink-0 items-center justify-center rounded-lg border border-hairline text-[9px] font-medium brand-grad-text"
                     style={{ background: active === id ? 'color-mix(in srgb, var(--accent) 8%, transparent)' : undefined }}
                   >
                     {String(i + 1).padStart(2, '0')}

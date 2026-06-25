@@ -2,9 +2,9 @@
 
 export const siteCopy = {
   /* Hero */
-  heroTitle: 'Speak innovation into motion.',
+  heroTitle: 'Innovation, speakable and actionable.',
   heroSubtitle:
-    'NUVAM builds AI-native products, automation systems, and web experiences that turn intent into momentum.',
+    'NUVAM transforms ideas into intelligent products — AI-native systems, automation workflows, and web experiences that turn intent into measurable momentum.',
 
   /* Services page */
   services: [
@@ -13,6 +13,7 @@ export const siteCopy = {
       label: '01',
       title: 'AI & ML Engineering',
       summary: 'Intelligent systems that learn, predict, and assist — built for real workflows.',
+      image: '/images/ai-ml.jpg',
       bullets: [
         'Custom LLM integrations and RAG pipelines',
         'Prediction models and classification systems',
@@ -26,6 +27,7 @@ export const siteCopy = {
       label: '02',
       title: 'Automation',
       summary: 'Replace repetitive work with reliable systems that run without supervision.',
+      image: '/images/automation.jpg',
       bullets: [
         'Workflow automation for approvals and ops',
         'Scheduled reporting and data pipelines',
@@ -39,6 +41,7 @@ export const siteCopy = {
       label: '03',
       title: 'SaaS Product Engineering',
       summary: 'Full-stack product builds with auth, billing, dashboards, and design systems baked in.',
+      image: '/images/saas.jpg',
       bullets: [
         'Multi-tenant SaaS architecture',
         'Design systems and component libraries',
@@ -52,6 +55,7 @@ export const siteCopy = {
       label: '04',
       title: 'Web & App Development',
       summary: 'Marketing sites, internal tools, and customer portals — built clean and fast.',
+      image: '/images/web-app.jpg',
       bullets: [
         'Marketing and brand websites',
         'Internal tooling and back-office portals',
@@ -65,6 +69,7 @@ export const siteCopy = {
       label: '05',
       title: 'Cloud Infrastructure',
       summary: 'Reliable, observable infra that scales with the product rather than against it.',
+      image: '/images/cloud.jpg',
       bullets: [
         'AWS, GCP, and Azure architecture design',
         'CI/CD pipelines and deployment automation',
@@ -78,6 +83,7 @@ export const siteCopy = {
       label: '06',
       title: 'Integration & APIs',
       summary: 'Connect anything — CRMs, ERPs, payment providers, and bespoke internal systems.',
+      image: '/images/api.jpg',
       bullets: [
         'REST and GraphQL API design and build',
         'Third-party API integrations (Salesforce, HubSpot, Stripe, etc.)',
@@ -224,7 +230,7 @@ export const siteCopy = {
     subheadline:
       'Tell us what you are building or trying to solve. We will read it carefully and respond within 24 hours.',
     details: {
-      email: 'hello@nuvam.in',
+      email: 'nuvam.com@gmail.com',
       location: 'India',
       responseTime: 'Within 24 hours',
     },

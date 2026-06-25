@@ -11,7 +11,16 @@ export function Footer() {
 
   const scrollTo = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault();
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    const el = document.getElementById(id);
+    if (el) {
+      const headerHeight = 72;
+      const elementPosition = el.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerHeight;
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
   };
 
   return (
@@ -20,7 +29,7 @@ export function Footer() {
         <div className="grid gap-8 md:grid-cols-[1fr_auto_auto] md:gap-10">
           <div>
             <a href="#home" onClick={(e) => scrollTo(e, 'home')} className="inline-flex items-center gap-3">
-              <img src="/logo.png" alt="NUVAM" className="h-10 w-10 rounded-full object-cover ring-1 ring-hairline/70" />
+              <img src="/logo.png" alt="NUVAM" className="h-10 w-10 object-contain" />
             </a>
             <p className="mt-4 max-w-xs text-sm leading-6 text-muted">
               AI-native products, automation systems, and web experiences built to last.
@@ -49,8 +58,8 @@ export function Footer() {
             <p className="mb-4 text-xs uppercase tracking-[0.25em] brand-grad-text">Reach us</p>
             <ul className="space-y-2 text-sm text-muted">
               <li>
-                <a href="mailto:hello@nuvam.in" className="transition-colors duration-200 hover:text-ink">
-                  hello@nuvam.in
+                <a href="mailto:nuvam.com@gmail.com" className="transition-colors duration-200 hover:text-ink">
+                  nuvam.com@gmail.com
                 </a>
               </li>
               <li>India</li>

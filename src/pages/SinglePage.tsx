@@ -605,45 +605,12 @@ const homeStats = [
   { value: 'India-first', label: 'Studio origin',           icon: '◇' },
 ];
 
-const homeFeatures = [
-  {
-    label: 'AI Systems',
-    body: 'LLM integrations, RAG pipelines, and prediction models built for real workflows.',
-    gradFrom: '#2979ff', gradTo: '#7b2fbe',
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M16.9 16.9l2.1 2.1M4.9 19.1l2.1-2.1M16.9 7.1l2.1-2.1" />
-      </svg>
-    ),
-  },
-  {
-    label: 'Automation',
-    body: 'Replace repetitive ops with reliable systems that run without supervision.',
-    gradFrom: '#7b2fbe', gradTo: '#e91e8c',
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4z" /><path d="M17 14v2m0 4v-2m0 0h-2m4 0h-2" />
-      </svg>
-    ),
-  },
-  {
-    label: 'Product Engineering',
-    body: 'Full-stack SaaS with auth, billing, dashboards, and design systems.',
-    gradFrom: '#e91e8c', gradTo: '#ff6d3b',
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="2" y="3" width="20" height="14" rx="2" /><path d="M8 21h8M12 17v4" />
-      </svg>
-    ),
-  },
-];
-
 function HomeSection() {
   return (
     <section id="home" className="scroll-mt-20 pt-0">
 
       {/* ── HERO CARD ─────────────────────────────────────────────── */}
-      <div className="relative overflow-hidden rounded-[2rem] border border-hairline/60 bg-surface md:rounded-[2.5rem]"
+      <div className="relative overflow-hidden rounded-[2rem] bg-surface md:rounded-[2.5rem]"
         style={{ boxShadow: '0 40px 100px color-mix(in srgb, var(--accent) 8%, transparent), 0 2px 0 color-mix(in srgb, var(--hairline) 60%, transparent)' }}
       >
         {/* ── Animated gradient orbs ─────────────────────────────── */}
@@ -676,26 +643,15 @@ function HomeSection() {
               animation: 'heroOrb1 14s ease-in-out infinite reverse',
             }}
           />
-          {/* Mesh grid overlay — very subtle */}
-          <div className="absolute inset-0 opacity-[0.025]"
-            style={{
-              backgroundImage: 'linear-gradient(var(--hairline) 1px, transparent 1px), linear-gradient(90deg, var(--hairline) 1px, transparent 1px)',
-              backgroundSize: '48px 48px',
-            }}
-          />
-          {/* Gradient top border stripe */}
-          <div className="absolute top-0 left-0 right-0 h-[2px]"
-            style={{ background: 'var(--brand-grad)', opacity: 0.7 }}
-          />
         </div>
 
         {/* ── Content ───────────────────────────────────────────────── */}
-        <div className="relative px-6 pt-10 pb-0 sm:px-10 md:px-16 md:pt-16">
+        <div className="relative px-6 pt-6 pb-0 sm:px-10 md:px-16 md:pt-10">
 
           {/* Eyebrow badge */}
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-hairline/60 bg-bg/60 px-4 py-1.5 backdrop-blur-sm">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-hairline/60 bg-bg/60 px-4 py-1.5 backdrop-blur-sm">
             <span className="h-1.5 w-1.5 rounded-full" style={{ background: 'var(--brand-grad)' }} />
-            <span className="text-[10px] uppercase tracking-[0.45em] font-medium text-muted">NUVAM Technology Studio</span>
+            <span className="text-[10px] uppercase tracking-[0.45em] font-medium text-muted">NUVAM Tech Hub</span>
           </div>
 
           {/* Headline */}
@@ -731,54 +687,9 @@ function HomeSection() {
 
         {/* Decorative bottom fade */}
         <div className="pointer-events-none h-8" />
-      </div>
 
-      {/* ── FEATURE CARDS ──────────────────────────────────────────── */}
-      <div className="mt-4 grid gap-3 sm:grid-cols-2 md:grid-cols-3">
-        {homeFeatures.map((f, i) => (
-          <div
-            key={f.label}
-            className="group relative overflow-hidden rounded-[1.5rem] border border-hairline bg-surface p-6 transition-all duration-300 hover:-translate-y-1 hover:border-transparent sm:rounded-[1.75rem] sm:p-7"
-            style={{
-              boxShadow: undefined,
-              ['--card-from' as string]: f.gradFrom,
-              ['--card-to' as string]: f.gradTo,
-            }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLElement).style.boxShadow = `0 20px 50px color-mix(in srgb, ${f.gradFrom} 12%, transparent), 0 0 0 1px color-mix(in srgb, ${f.gradFrom} 40%, transparent)`;
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLElement).style.boxShadow = '';
-            }}
-          >
-            {/* Ambient glow layer */}
-            <div
-              className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 rounded-[inherit]"
-              style={{ background: `radial-gradient(ellipse at top left, color-mix(in srgb, ${f.gradFrom} 8%, transparent), transparent 65%)` }}
-            />
-            {/* Icon with gradient bg */}
-            <div
-              className="mb-5 flex h-11 w-11 items-center justify-center rounded-2xl text-white shadow-sm"
-              style={{ background: `linear-gradient(135deg, ${f.gradFrom}, ${f.gradTo})`, boxShadow: `0 6px 20px color-mix(in srgb, ${f.gradFrom} 30%, transparent)` }}
-            >
-              {f.icon}
-            </div>
-            {/* Number label */}
-            <p className="mb-1 text-[10px] uppercase tracking-[0.35em]" style={{ color: f.gradFrom, opacity: 0.6 }}>0{i + 1}</p>
-            <h3 className="font-display text-xl">{f.label}</h3>
-            <p className="mt-2 text-sm leading-6 text-muted">{f.body}</p>
-            {/* Arrow hint */}
-            <div
-              className="mt-5 flex items-center gap-1.5 text-xs font-medium opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-1"
-              style={{ color: f.gradFrom }}
-            >
-              Learn more
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-                <path d="M2 6h8M7 3l3 3-3 3" />
-              </svg>
-            </div>
-          </div>
-        ))}
+        {/* ── Dynamic gradient border ─────────────────────────────── */}
+        <div className="pointer-events-none absolute inset-0 rounded-[2rem] md:rounded-[2.5rem]" style={{ border: '1px solid transparent', backgroundImage: 'var(--brand-grad)', WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)', mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)', WebkitMaskComposite: 'xor', maskComposite: 'exclude' }}></div>
       </div>
     </section>
   );
@@ -792,7 +703,7 @@ function ServicesSection() {
   const [openId, setOpenId] = useState<string | null>(null);
 
   return (
-    <section id="services" className="scroll-mt-20 pt-0">
+    <section id="services" className="scroll-mt-20 pt-12 md:pt-16">
       <SectionHeading
         eyebrow="Services"
         title="A wider set of capabilities."
@@ -814,6 +725,14 @@ function ServicesSection() {
             >
               {/* Ambient glow */}
               <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,color-mix(in_srgb,var(--accent)_5%,transparent),transparent_60%)]" />
+
+              {/* Service image */}
+              {svc.image && (
+                <div className="relative h-40 w-full overflow-hidden">
+                  <img src={svc.image} alt={svc.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-surface/80 to-transparent" />
+                </div>
+              )}
 
               {/* Always-visible header — click to toggle */}
               <button
@@ -878,27 +797,6 @@ function ServicesSection() {
         })}
       </div>
 
-      {/* How we work */}
-      <div className="mt-8 rounded-[1.75rem] border border-hairline bg-surface p-6 sm:rounded-[2rem] md:p-10">
-        <p className="mb-3 text-xs uppercase tracking-[0.35em] brand-grad-text">How we work</p>
-        <h3 className="font-display text-2xl md:text-3xl">A delivery flow that actually works.</h3>
-        <p className="mt-3 max-w-2xl text-sm leading-7 text-muted">Numbered phases. Real milestones. Working software at every checkpoint — not documentation.</p>
-        <div className="mt-6 grid gap-5 md:grid-cols-4 md:gap-8">
-          {process.map((step, i) => (
-            <div key={step.step} className="relative">
-              {i < process.length - 1 && (
-                <div className="absolute left-[calc(2.5rem+8px)] top-5 hidden h-[1px] w-[calc(100%-2.5rem-8px)] bg-hairline/60 md:block" />
-              )}
-              <div className="relative z-10 mb-3 inline-flex h-9 w-9 items-center justify-center rounded-full border border-hairline bg-bg text-xs font-medium brand-grad-text">
-                {step.step}
-              </div>
-              <h4 className="font-display text-base">{step.title}</h4>
-              <p className="mt-1.5 text-sm leading-6 text-muted">{step.body}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* CTA */}
       <div className="mt-4 flex flex-col gap-4 rounded-[1.5rem] border border-hairline bg-surface px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-8 sm:py-5 sm:rounded-[2rem]">
         <div>
@@ -941,7 +839,7 @@ function ProductsSection() {
   const cmOpen = expanded === 'commerce';
 
   return (
-    <section id="products" className="scroll-mt-20 pt-0">
+    <section id="products" className="scroll-mt-20 pt-12 md:pt-16">
       <SectionHeading
         eyebrow="Products"
         title="Built in-house. Ready for yours."
@@ -1098,7 +996,7 @@ function AboutSection() {
   const { about } = siteCopy;
 
   return (
-    <section id="about" className="scroll-mt-20 pt-0">
+    <section id="about" className="scroll-mt-20 pt-12 md:pt-16">
       <SectionHeading eyebrow="About" title={about.headline} body={about.subheadline} />
 
       {/* Stats */}
@@ -1109,24 +1007,6 @@ function AboutSection() {
             <p className="mt-2 text-xs uppercase tracking-[0.2em] text-muted">{s.label}</p>
           </div>
         ))}
-      </div>
-
-      {/* Founder */}
-      <div className="mt-6 relative overflow-hidden rounded-[1.5rem] border border-hairline bg-surface p-5 sm:p-8 md:rounded-[2.5rem] md:p-12">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,color-mix(in_srgb,var(--accent-3)_7%,transparent),transparent_50%)]" />
-        <div className="relative grid gap-8 md:grid-cols-[auto_1fr] md:gap-14 md:items-start">
-          <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full border-2 border-hairline bg-bg">
-            <span className="font-display text-2xl brand-grad-text select-none">N</span>
-          </div>
-          <div>
-            <p className="text-xs uppercase tracking-[0.3em] brand-grad-text">{about.founder.role}</p>
-            <h3 className="mt-2 font-display text-3xl">{about.founder.name}</h3>
-            <p className="mt-4 max-w-2xl text-base leading-7 text-muted">{about.founder.bio}</p>
-            <blockquote className="mt-6 border-l-2 border-[var(--accent)] pl-5 font-display text-xl leading-snug italic text-ink/80">
-              "Great technology should feel inevitable — not complicated."
-            </blockquote>
-          </div>
-        </div>
       </div>
 
       {/* Values */}
@@ -1140,25 +1020,6 @@ function AboutSection() {
             <p className="mt-3 text-base leading-7 text-muted">{v.body}</p>
           </div>
         ))}
-      </div>
-
-      {/* Studio DNA */}
-      <div className="mt-6 rounded-[1.5rem] border border-hairline bg-surface p-5 sm:rounded-[2rem] sm:p-8 md:p-12">
-        <p className="mb-4 text-xs uppercase tracking-[0.35em] brand-grad-text">Studio DNA</p>
-        <h3 className="font-display text-3xl">Quiet confidence. Lasting work.</h3>
-        <div className="mt-8 grid gap-5 md:grid-cols-2 md:gap-8">
-          {[
-            { title: 'No noise.', body: 'We do not chase trends. We pick the right tools for the right problem and execute without theatre.' },
-            { title: 'Everything connected.', body: 'Every service composes — AI into automation, automation into product, product into cloud. One studio, every layer.' },
-            { title: 'Skin in the game.', body: 'We built VisionGate and NUVAM Commerce using the same stack and process we bring to clients. We know what works.' },
-            { title: 'India-first, globally standard.', body: 'Built for the velocity of the Indian market — designed to compete at any global standard without compromise.' },
-          ].map((item) => (
-            <div key={item.title} className="border-l-2 border-hairline pl-5 hover:border-[var(--accent)] transition-colors duration-300">
-              <h4 className="font-display text-xl">{item.title}</h4>
-              <p className="mt-2 text-base leading-7 text-muted">{item.body}</p>
-            </div>
-          ))}
-        </div>
       </div>
     </section>
   );
@@ -1185,7 +1046,7 @@ function ContactSection() {
   const labelCls = 'block mb-1.5 text-xs uppercase tracking-[0.2em] text-muted';
 
   return (
-    <section id="contact" className="scroll-mt-20 pt-0">
+    <section id="contact" className="scroll-mt-20 pt-12 md:pt-16">
       <SectionHeading eyebrow="Contact" title={contact.headline} body={contact.subheadline} />
 
       <div className="mt-8 grid gap-4 lg:grid-cols-[1fr_300px] lg:gap-6">
