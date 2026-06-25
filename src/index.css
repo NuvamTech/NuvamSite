@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #f8f8fc;
+  --bg: #f6f5fb;
   --surface: #ffffff;
   --ink: #0f0e1a;
   --hairline: #e0ddef;
@@ -18,13 +18,17 @@
   --brand-grad: linear-gradient(90deg, var(--grad-start), var(--grad-mid1), var(--grad-mid2), var(--grad-mid3), var(--grad-end));
   --font-display: "Georgia", "Times New Roman", serif;
   --font-body: "Inter", "Segoe UI", system-ui, sans-serif;
+  /* Subtle page background gradient (light) */
+  --page-bg: radial-gradient(ellipse 120% 60% at 80% -10%, rgba(123,47,190,0.055) 0%, transparent 60%),
+             radial-gradient(ellipse 90%  50% at -10% 80%, rgba(41,121,255,0.045) 0%, transparent 55%),
+             var(--bg);
 }
 
 :root[data-theme='dark'] {
-  --bg: #0d0c18;
-  --surface: #141324;
+  --bg: #0b0a17;
+  --surface: #111025;
   --ink: #f0eeff;
-  --hairline: #2a2840;
+  --hairline: #242238;
   --muted: #9e9ab8;
   --accent: #9b5fde;
   --accent-2: #f04fa0;
@@ -35,6 +39,11 @@
   --grad-mid2: #f04fa0;
   --grad-mid3: #ff7a4a;
   --grad-end: #ffc933;
+  /* Subtle page background gradient (dark) */
+  --page-bg: radial-gradient(ellipse 130% 55% at 85% -5%, rgba(155,95,222,0.10) 0%, transparent 55%),
+             radial-gradient(ellipse 100% 50% at -5% 85%, rgba(82,153,255,0.07) 0%, transparent 55%),
+             radial-gradient(ellipse 80%  40% at 50% 110%, rgba(240,79,160,0.06) 0%, transparent 50%),
+             var(--bg);
 }
 
 @theme {
@@ -51,10 +60,11 @@
 }
 
 html {
-  background: var(--bg);
+  background: var(--page-bg);
   color: var(--ink);
   font-family: var(--font-body);
   color-scheme: light;
+  min-height: 100%;
 }
 
 html[data-theme='dark'] {
@@ -64,7 +74,8 @@ html[data-theme='dark'] {
 body {
   margin: 0;
   min-width: 320px;
-  background: var(--bg);
+  min-height: 100vh;
+  background: transparent;
 }
 
 a {
@@ -76,4 +87,55 @@ button,
 input,
 textarea {
   font: inherit;
+}
+
+/* ── Brand gradient utilities ───────────────────────────────────────── */
+.brand-grad {
+  background: var(--brand-grad);
+}
+
+.brand-grad-text {
+  background: var(--brand-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.btn-primary {
+  background: var(--brand-grad);
+  color: #fff;
+}
+
+/* ── Hero orb float animations ──────────────────────────────────────── */
+@keyframes heroOrb1 {
+  0%   { transform: translate(0,    0)    scale(1);    }
+  25%  { transform: translate(30px, -20px) scale(1.06); }
+  50%  { transform: translate(15px, 35px)  scale(0.96); }
+  75%  { transform: translate(-20px,15px)  scale(1.04); }
+  100% { transform: translate(0,    0)    scale(1);    }
+}
+
+@keyframes heroOrb2 {
+  0%   { transform: translate(0,    0)    scale(1);    }
+  30%  { transform: translate(-35px, 25px) scale(1.08); }
+  60%  { transform: translate(25px, -15px) scale(0.94); }
+  100% { transform: translate(0,    0)    scale(1);    }
+}
+
+@keyframes heroOrb3 {
+  0%   { transform: translate(0,    0)    scale(1);    }
+  40%  { transform: translate(28px, -30px) scale(1.05); }
+  70%  { transform: translate(-18px, 20px) scale(0.97); }
+  100% { transform: translate(0,    0)    scale(1);    }
+}
+
+/* ── Vite / project animations (kept) ──────────────────────────────── */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.motion-safe\:animate-fade-up {
+  animation: fade-up 0.55s ease both;
 }

@@ -25,18 +25,70 @@ function Divider() {
    VISIONGATE — FACE SCAN DEMO
    Phases: 0 idle → 1 scanning → 2 matching → 3 verified → loop
    ════════════════════════════════════════════════════════════════════════════ */
-const LANDMARKS = [
-  { top: 19, left: 48, label: 'forehead' },
-  { top: 35, left: 29, label: 'eye-l'    },
-  { top: 35, left: 67, label: 'eye-r'    },
-  { top: 36, left: 38, label: 'brow-l'   },
-  { top: 36, left: 58, label: 'brow-r'   },
-  { top: 50, left: 40, label: 'nose-l'   },
-  { top: 50, left: 56, label: 'nose-r'   },
-  { top: 58, left: 47, label: 'nose-tip' },
-  { top: 67, left: 33, label: 'mouth-l'  },
-  { top: 67, left: 63, label: 'mouth-r'  },
-  { top: 75, left: 47, label: 'chin'     },
+/* Face mesh node positions — maps to a realistic face layout (200×260 viewBox) */
+const MESH_NODES = [
+  // Jawline
+  { x: 38,  y: 200, g: 'jaw'    }, { x: 50,  y: 218, g: 'jaw' },
+  { x: 70,  y: 228, g: 'jaw'    }, { x: 100, y: 232, g: 'jaw' },
+  { x: 130, y: 228, g: 'jaw'    }, { x: 150, y: 218, g: 'jaw' },
+  { x: 162, y: 200, g: 'jaw'    },
+  // Cheekbones
+  { x: 28,  y: 160, g: 'cheek'  }, { x: 172, y: 160, g: 'cheek' },
+  // Temples
+  { x: 30,  y: 110, g: 'temple' }, { x: 170, y: 110, g: 'temple' },
+  // Forehead
+  { x: 60,  y: 52,  g: 'brow'   }, { x: 100, y: 44,  g: 'brow' }, { x: 140, y: 52, g: 'brow' },
+  // Left eyebrow
+  { x: 56,  y: 100, g: 'lbrow'  }, { x: 72,  y: 94,  g: 'lbrow' }, { x: 88,  y: 96, g: 'lbrow' },
+  // Right eyebrow
+  { x: 112, y: 96,  g: 'rbrow'  }, { x: 128, y: 94,  g: 'rbrow' }, { x: 144, y: 100, g: 'rbrow' },
+  // Left eye
+  { x: 66,  y: 116, g: 'leye'   }, { x: 76,  y: 112, g: 'leye' },
+  { x: 86,  y: 116, g: 'leye'   }, { x: 76,  y: 122, g: 'leye' },
+  // Right eye
+  { x: 114, y: 116, g: 'reye'   }, { x: 124, y: 112, g: 'reye' },
+  { x: 134, y: 116, g: 'reye'   }, { x: 124, y: 122, g: 'reye' },
+  // Nose bridge + tip
+  { x: 100, y: 110, g: 'nose'   }, { x: 96,  y: 136, g: 'nose' },
+  { x: 100, y: 150, g: 'nose'   }, { x: 104, y: 136, g: 'nose' },
+  { x: 88,  y: 152, g: 'nose'   }, { x: 112, y: 152, g: 'nose' },
+  // Mouth
+  { x: 74,  y: 180, g: 'mouth'  }, { x: 88,  y: 175, g: 'mouth' },
+  { x: 100, y: 178, g: 'mouth'  }, { x: 112, y: 175, g: 'mouth' },
+  { x: 126, y: 180, g: 'mouth'  }, { x: 100, y: 190, g: 'mouth' },
+  // Chin
+  { x: 100, y: 222, g: 'chin'   }, { x: 84,  y: 215, g: 'chin' }, { x: 116, y: 215, g: 'chin' },
+];
+
+/* Mesh triangulation edges (pairs of node indices) */
+const MESH_EDGES: [number, number][] = [
+  // Jaw outline
+  [0,1],[1,2],[2,3],[3,4],[4,5],[5,6],
+  // Jaw to cheek
+  [0,7],[6,8],[7,9],[8,10],
+  // Forehead arc
+  [9,11],[11,12],[12,13],[13,10],
+  // Left brow to temple/jaw
+  [9,14],[14,15],[15,16],[16,21],[14,21],
+  // Right brow
+  [10,17],[17,18],[18,19],[19,24],[17,24],
+  // Brow cross
+  [15,28],[18,28],
+  // Left eye
+  [20,21],[21,22],[22,23],[23,20],
+  // Right eye
+  [24,25],[25,26],[26,27],[27,24],
+  // Nose
+  [28,29],[29,30],[30,31],[28,31],[29,32],[31,33],[30,32],[30,33],
+  // Nose to mouth
+  [32,34],[33,38],[30,37],
+  // Mouth
+  [34,35],[35,36],[36,37],[37,38],[38,39],[36,39],
+  // Chin
+  [3,40],[40,41],[40,42],[41,3],[42,3],
+  // Cheek to jaw/brow fill
+  [7,0],[7,14],[8,6],[8,19],[7,34],[8,38],
+  [0,14],[6,19],[2,41],[4,42],
 ];
 
 type VGPhase = 0 | 1 | 2 | 3;
@@ -45,177 +97,297 @@ function VisionGateDemo() {
   const [cycle,    setCycle]    = useState(0);
   const [phase,    setPhase]    = useState<VGPhase>(0);
   const [progress, setProgress] = useState(0);
-  const [scanKey,  setScanKey]  = useState(0); // remounts scan-line to restart CSS anim
+  const [scanY,    setScanY]    = useState(0);
+  const [meshReveal, setMeshReveal] = useState(0); // 0–1 fraction of nodes visible
 
   useEffect(() => {
     setPhase(0);
     setProgress(0);
+    setScanY(0);
+    setMeshReveal(0);
 
     const timers: ReturnType<typeof setTimeout>[] = [];
-    let rafId: number;
+    let rafScan: number;
+    let rafMatch: number;
+    let rafMesh: number;
 
-    // 0.6 s → phase 1: scanning starts, scan line sweeps
+    // 0.5 s → phase 1: scan line sweeps top-to-bottom
     timers.push(setTimeout(() => {
       setPhase(1);
-      setScanKey(k => k + 1);
-    }, 600));
+      const t0 = performance.now();
+      const sweep = (now: number) => {
+        const frac = Math.min((now - t0) / 2800, 1);
+        setScanY(frac);
+        if (frac < 1) rafScan = requestAnimationFrame(sweep);
+      };
+      rafScan = requestAnimationFrame(sweep);
+    }, 500));
 
-    // 3.6 s → phase 2: matching, progress bar animates
+    // 3.5 s → phase 2: mesh nodes light up progressively
     timers.push(setTimeout(() => {
       setPhase(2);
       const t0 = performance.now();
-      const tick = (now: number) => {
-        const p = Math.min(Math.round(((now - t0) / 2200) * 98), 98);
-        setProgress(p);
-        if (p < 98) rafId = requestAnimationFrame(tick);
+      const meshAnim = (now: number) => {
+        const p = Math.min((now - t0) / 1800, 1);
+        setMeshReveal(p);
+        if (p < 1) rafMesh = requestAnimationFrame(meshAnim);
       };
-      rafId = requestAnimationFrame(tick);
-    }, 3600));
+      rafMesh = requestAnimationFrame(meshAnim);
+      // progress bar
+      const p0 = performance.now();
+      const tick = (now: number) => {
+        const p = Math.min(Math.round(((now - p0) / 2000) * 98), 98);
+        setProgress(p);
+        if (p < 98) rafMatch = requestAnimationFrame(tick);
+      };
+      rafMatch = requestAnimationFrame(tick);
+    }, 3500));
 
     // 6.0 s → phase 3: verified
     timers.push(setTimeout(() => setPhase(3), 6000));
 
-    // 8.4 s → restart
-    timers.push(setTimeout(() => setCycle(c => c + 1), 8400));
+    // 8.8 s → restart
+    timers.push(setTimeout(() => setCycle(c => c + 1), 8800));
 
     return () => {
       timers.forEach(clearTimeout);
-      if (rafId) cancelAnimationFrame(rafId);
+      if (rafScan)  cancelAnimationFrame(rafScan);
+      if (rafMatch) cancelAnimationFrame(rafMatch);
+      if (rafMesh)  cancelAnimationFrame(rafMesh);
     };
   }, [cycle]);
 
-  const dotVisible = (lm: typeof LANDMARKS[0]) =>
-    phase === 2 || phase === 3;
+  const C = '#5299FF'; // primary scan blue
+  const CP = '#9B5FDE'; // purple accent
+  const scanPx = scanY * 260; // 0–260 in SVG coords
 
   return (
-    <div className="relative overflow-hidden rounded-[1.75rem] border border-[#1a1830] bg-[#07060f] h-[320px]">
-      {/* Grid texture */}
+    <div className="relative overflow-hidden rounded-[1.75rem] border border-[#1a1830] bg-[#07060f] h-[340px]">
+
+      {/* Subtle dot-grid background */}
       <div
-        className="absolute inset-0 opacity-[0.055]"
+        className="absolute inset-0 opacity-[0.04]"
         style={{
-          backgroundImage:
-            'linear-gradient(rgba(82,153,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(82,153,255,1) 1px, transparent 1px)',
-          backgroundSize: '28px 28px',
+          backgroundImage: 'radial-gradient(circle, rgba(82,153,255,1) 1px, transparent 1px)',
+          backgroundSize: '22px 22px',
         }}
       />
 
-      {/* Top bar */}
-      <div className="absolute top-0 left-0 right-0 h-10 border-b border-[#1a1830]/80 flex items-center justify-between px-5">
+      {/* Top status bar */}
+      <div className="absolute top-0 left-0 right-0 h-10 border-b border-[#1a1830]/80 flex items-center justify-between px-5 z-10">
         <div className="flex items-center gap-2">
-          <span className={`h-1.5 w-1.5 rounded-full transition-colors duration-500 ${phase >= 1 ? 'bg-[#5299FF]' : 'bg-white/20'}`}
-            style={phase >= 1 ? { boxShadow: '0 0 6px 3px rgba(82,153,255,0.6)', animation: 'pulse 2s infinite' } : {}} />
+          <span
+            className={`h-1.5 w-1.5 rounded-full transition-colors duration-500 ${phase >= 1 ? 'bg-[#5299FF]' : 'bg-white/20'}`}
+            style={phase >= 1 ? { boxShadow: '0 0 6px 3px rgba(82,153,255,0.6)', animation: 'pulse 2s infinite' } : {}}
+          />
           <span className="text-[9px] uppercase tracking-[0.28em] text-white/35">
-            {phase === 0 ? 'Standby' : phase === 1 ? 'Face detected — scanning' : phase === 2 ? 'Matching identity' : 'Access granted'}
+            {phase === 0 ? 'Initialising…'
+              : phase === 1 ? 'Scanning face…'
+              : phase === 2 ? `Mapping landmarks — ${progress}%`
+              : 'Identity verified'}
           </span>
         </div>
         <span className="text-[9px] uppercase tracking-[0.2em] text-white/20">VisionGate™</span>
       </div>
 
-      {/* Face detection area */}
+      {/* Main SVG canvas */}
       <div className="absolute inset-0 top-10 flex items-center justify-center">
-        <div className="relative" style={{ width: 128, height: 166 }}>
+        <svg
+          viewBox="0 0 200 270"
+          width="160"
+          height="215"
+          fill="none"
+          style={{ overflow: 'visible' }}
+        >
+          {/* ── Face silhouette ─────────────────────────────────────── */}
+          {/* Head shape */}
+          <ellipse
+            cx="100" cy="130" rx="72" ry="90"
+            stroke={phase >= 3 ? 'rgba(82,153,255,0.9)' : phase >= 1 ? 'rgba(82,153,255,0.5)' : 'rgba(82,153,255,0.15)'}
+            strokeWidth="1.4"
+            strokeDasharray={phase >= 3 ? 'none' : '6 3'}
+            style={{ transition: 'stroke 0.6s ease' }}
+          />
 
-          {/* Face oval SVG */}
-          <svg className="absolute inset-0 w-full h-full" viewBox="0 0 128 166" fill="none">
-            <ellipse
-              cx="64" cy="83" rx="58" ry="77"
-              stroke={phase >= 3 ? 'rgba(82,153,255,0.9)' : phase >= 1 ? 'rgba(82,153,255,0.45)' : 'rgba(82,153,255,0.12)'}
-              strokeWidth="1.5"
-              strokeDasharray="5 3.5"
-              className={phase >= 3 ? 'animate-vg-ring' : ''}
-              style={{ transition: 'stroke 0.6s ease' }}
-            />
-            {/* Landmark connector lines (visible in phases 2-3) */}
-            {(phase === 2 || phase === 3) && (
-              <>
-                {/* Eye line */}
-                <line x1="37" y1="58" x2="86" y2="58" stroke="rgba(82,153,255,0.18)" strokeWidth="1" />
-                {/* Nose bridge */}
-                <line x1="51" y1="58" x2="51" y2="77" stroke="rgba(82,153,255,0.15)" strokeWidth="1" />
-                <line x1="77" y1="58" x2="77" y2="77" stroke="rgba(82,153,255,0.15)" strokeWidth="1" />
-                {/* Mouth */}
-                <line x1="42" y1="111" x2="81" y2="111" stroke="rgba(82,153,255,0.18)" strokeWidth="1" />
-                {/* Chin to eye */}
-                <line x1="60" y1="31" x2="60" y2="58"  stroke="rgba(82,153,255,0.12)" strokeWidth="1" />
-              </>
-            )}
-          </svg>
-
-          {/* Corner brackets — appear at phase 1 */}
-          {[
-            'top-0 left-0 border-t-2 border-l-2',
-            'top-0 right-0 border-t-2 border-r-2',
-            'bottom-0 left-0 border-b-2 border-l-2',
-            'bottom-0 right-0 border-b-2 border-r-2',
-          ].map((cls) => (
-            <div
-              key={cls}
-              className={`absolute w-5 h-5 border-[#5299FF] ${cls} transition-all duration-500`}
-              style={{ opacity: phase >= 1 ? 1 : 0, transform: phase >= 1 ? 'scale(1)' : 'scale(0.7)' }}
-            />
-          ))}
-
-          {/* Scan line — remounts each cycle to re-trigger CSS animation */}
-          {phase === 1 && (
-            <div
-              key={scanKey}
-              className="absolute left-[-10%] right-[-10%] h-[2px] animate-vg-scan"
-              style={{
-                background: 'linear-gradient(90deg, transparent, #5299FF 30%, #9B5FDE 50%, #5299FF 70%, transparent)',
-                boxShadow: '0 0 14px 4px rgba(82,153,255,0.55)',
-              }}
-            />
+          {/* Left eye almond */}
+          <path
+            d="M58 116 Q66 108 76 116 Q66 124 58 116Z"
+            stroke={phase >= 1 ? 'rgba(82,153,255,0.5)' : 'rgba(82,153,255,0.1)'}
+            strokeWidth="1.2"
+            style={{ transition: 'stroke 0.5s' }}
+          />
+          {/* Left iris */}
+          <circle cx="68" cy="116" r="4.5"
+            stroke={phase >= 1 ? 'rgba(82,153,255,0.45)' : 'rgba(82,153,255,0.08)'}
+            strokeWidth="1" style={{ transition: 'stroke 0.5s' }} />
+          {/* Left eye tracking box */}
+          {phase >= 1 && (
+            <rect x="50" y="104" width="38" height="24" rx="3"
+              stroke={phase >= 3 ? 'rgba(82,153,255,0.9)' : 'rgba(82,153,255,0.35)'}
+              strokeWidth="0.8" strokeDasharray="3 2"
+              style={{ transition: 'stroke 0.4s' }} />
           )}
 
-          {/* Landmark dots */}
-          {LANDMARKS.map((lm) => (
-            <div
-              key={lm.label}
-              className="absolute"
-              style={{ top: `${lm.top}%`, left: `${lm.left}%`, transform: 'translate(-50%, -50%)' }}
-            >
-              <div
-                className="h-1.5 w-1.5 rounded-full transition-all duration-300"
+          {/* Right eye almond */}
+          <path
+            d="M124 116 Q132 108 142 116 Q132 124 124 116Z"
+            stroke={phase >= 1 ? 'rgba(82,153,255,0.5)' : 'rgba(82,153,255,0.1)'}
+            strokeWidth="1.2"
+            style={{ transition: 'stroke 0.5s' }}
+          />
+          {/* Right iris */}
+          <circle cx="133" cy="116" r="4.5"
+            stroke={phase >= 1 ? 'rgba(82,153,255,0.45)' : 'rgba(82,153,255,0.08)'}
+            strokeWidth="1" style={{ transition: 'stroke 0.5s' }} />
+          {/* Right eye tracking box */}
+          {phase >= 1 && (
+            <rect x="116" y="104" width="38" height="24" rx="3"
+              stroke={phase >= 3 ? 'rgba(82,153,255,0.9)' : 'rgba(82,153,255,0.35)'}
+              strokeWidth="0.8" strokeDasharray="3 2"
+              style={{ transition: 'stroke 0.4s' }} />
+          )}
+
+          {/* Nose bridge */}
+          <path d="M92 100 L88 148 Q100 155 112 148 L108 100"
+            stroke={phase >= 1 ? 'rgba(82,153,255,0.3)' : 'rgba(82,153,255,0.06)'}
+            strokeWidth="1" strokeLinecap="round"
+            style={{ transition: 'stroke 0.5s' }} />
+
+          {/* Mouth */}
+          <path d="M76 180 Q88 172 100 175 Q112 172 124 180"
+            stroke={phase >= 1 ? 'rgba(82,153,255,0.35)' : 'rgba(82,153,255,0.07)'}
+            strokeWidth="1.2" strokeLinecap="round"
+            style={{ transition: 'stroke 0.5s' }} />
+          <path d="M82 180 Q100 194 118 180"
+            stroke={phase >= 1 ? 'rgba(82,153,255,0.25)' : 'rgba(82,153,255,0.05)'}
+            strokeWidth="1" strokeLinecap="round"
+            style={{ transition: 'stroke 0.5s' }} />
+
+          {/* Eyebrows */}
+          <path d="M54 100 Q68 92 84 96"
+            stroke={phase >= 1 ? 'rgba(82,153,255,0.3)' : 'rgba(82,153,255,0.07)'}
+            strokeWidth="1.2" strokeLinecap="round"
+            style={{ transition: 'stroke 0.5s' }} />
+          <path d="M116 96 Q132 92 146 100"
+            stroke={phase >= 1 ? 'rgba(82,153,255,0.3)' : 'rgba(82,153,255,0.07)'}
+            strokeWidth="1.2" strokeLinecap="round"
+            style={{ transition: 'stroke 0.5s' }} />
+
+          {/* ── Facial mesh edges ────────────────────────────────────── */}
+          {(phase === 2 || phase === 3) && MESH_EDGES.map(([a, b], i) => {
+            const na = MESH_NODES[a], nb = MESH_NODES[b];
+            const revealed = meshReveal > i / MESH_EDGES.length;
+            return (
+              <line
+                key={i}
+                x1={na.x} y1={na.y} x2={nb.x} y2={nb.y}
+                stroke={phase === 3 ? `rgba(82,153,255,0.22)` : `rgba(82,153,255,0.14)`}
+                strokeWidth="0.6"
+                style={{ opacity: revealed ? 1 : 0, transition: 'opacity 0.15s' }}
+              />
+            );
+          })}
+
+          {/* ── Mesh nodes ───────────────────────────────────────────── */}
+          {(phase === 2 || phase === 3) && MESH_NODES.map((n, i) => {
+            const revealed = meshReveal > i / MESH_NODES.length;
+            const isKey = ['leye','reye','nose','mouth'].includes(n.g);
+            return (
+              <circle
+                key={i}
+                cx={n.x} cy={n.y}
+                r={isKey ? 1.8 : 1.2}
+                fill={phase === 3 ? C : `rgba(82,153,255,0.8)`}
                 style={{
-                  background: phase === 3 ? '#5299FF' : 'rgba(82,153,255,0.8)',
-                  boxShadow: dotVisible(lm) ? '0 0 6px 2px rgba(82,153,255,0.65)' : 'none',
-                  opacity: dotVisible(lm) ? 1 : 0,
-                  transform: dotVisible(lm) ? 'scale(1)' : 'scale(0)',
+                  opacity: revealed ? 1 : 0,
+                  filter: isKey ? `drop-shadow(0 0 3px ${C})` : undefined,
+                  transition: 'opacity 0.12s',
                 }}
               />
-            </div>
-          ))}
+            );
+          })}
 
-          {/* Verified checkmark overlay */}
-          <div
-            className="absolute inset-0 flex items-center justify-center transition-all duration-600"
-            style={{ opacity: phase === 3 ? 1 : 0, transform: phase === 3 ? 'scale(1)' : 'scale(0.75)' }}
-          >
-            <div
-              className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-[#5299FF] text-2xl font-bold text-[#5299FF]"
-              style={{ boxShadow: '0 0 28px rgba(82,153,255,0.55)', background: 'rgba(82,153,255,0.08)' }}
-            >
-              ✓
-            </div>
-          </div>
-        </div>
+          {/* ── Scan laser line (phase 1) ─────────────────────────────── */}
+          {phase === 1 && (
+            <>
+              {/* Laser beam */}
+              <line
+                x1="18" y1={scanPx} x2="182" y2={scanPx}
+                stroke="url(#scanGrad)"
+                strokeWidth="1.8"
+              />
+              {/* Soft glow below */}
+              <rect x="18" y={scanPx} width="164" height="10"
+                fill="url(#scanGlow)" opacity="0.3" />
+              <defs>
+                <linearGradient id="scanGrad" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="transparent" />
+                  <stop offset="25%" stopColor={C} />
+                  <stop offset="50%" stopColor={CP} />
+                  <stop offset="75%" stopColor={C} />
+                  <stop offset="100%" stopColor="transparent" />
+                </linearGradient>
+                <linearGradient id="scanGlow" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor={C} stopOpacity="0.5" />
+                  <stop offset="100%" stopColor={C} stopOpacity="0" />
+                </linearGradient>
+              </defs>
+            </>
+          )}
+
+          {/* ── Corner brackets ───────────────────────────────────────── */}
+          {/* Top-left */}
+          <path d="M22 50 L22 40 L32 40" stroke={phase >= 1 ? 'rgba(82,153,255,0.7)' : 'rgba(82,153,255,0.15)'} strokeWidth="1.5" strokeLinecap="round" style={{ transition: 'stroke 0.5s' }} />
+          {/* Top-right */}
+          <path d="M168 50 L168 40 L158 40" stroke={phase >= 1 ? 'rgba(82,153,255,0.7)' : 'rgba(82,153,255,0.15)'} strokeWidth="1.5" strokeLinecap="round" style={{ transition: 'stroke 0.5s' }} />
+          {/* Bottom-left */}
+          <path d="M22 228 L22 238 L32 238" stroke={phase >= 1 ? 'rgba(82,153,255,0.7)' : 'rgba(82,153,255,0.15)'} strokeWidth="1.5" strokeLinecap="round" style={{ transition: 'stroke 0.5s' }} />
+          {/* Bottom-right */}
+          <path d="M168 228 L168 238 L158 238" stroke={phase >= 1 ? 'rgba(82,153,255,0.7)' : 'rgba(82,153,255,0.15)'} strokeWidth="1.5" strokeLinecap="round" style={{ transition: 'stroke 0.5s' }} />
+
+          {/* ── Verified overlay (phase 3) ────────────────────────────── */}
+          {phase >= 3 && (
+            <g style={{ opacity: phase === 3 ? 1 : 0, transition: 'opacity 0.6s' }}>
+              <circle cx="100" cy="130" r="30"
+                fill="rgba(82,153,255,0.07)"
+                stroke="rgba(82,153,255,0.8)"
+                strokeWidth="1.5" />
+              <text x="100" y="138" textAnchor="middle"
+                fontSize="20" fontWeight="bold"
+                fill={C}
+                style={{ filter: `drop-shadow(0 0 8px ${C})` }}>
+                ✓
+              </text>
+            </g>
+          )}
+        </svg>
       </div>
+
+      {/* Eye glow blobs (ambient, phases 2–3) */}
+      {(phase === 2 || phase === 3) && (
+        <>
+          <div className="absolute pointer-events-none rounded-full"
+            style={{ width: 30, height: 14, background: `radial-gradient(ellipse,rgba(82,153,255,0.25),transparent 70%)`,
+              top: 'calc(50% - 32px)', left: 'calc(50% - 68px)', transform: 'translate(-50%,-50%)' }} />
+          <div className="absolute pointer-events-none rounded-full"
+            style={{ width: 30, height: 14, background: `radial-gradient(ellipse,rgba(82,153,255,0.25),transparent 70%)`,
+              top: 'calc(50% - 32px)', left: 'calc(50% + 24px)', transform: 'translate(-50%,-50%)' }} />
+        </>
+      )}
 
       {/* Bottom status */}
       <div className="absolute bottom-0 left-0 right-0 px-5 pb-4 pt-3 border-t border-[#1a1830]/60 space-y-2">
         <div className="flex items-center justify-between text-[9px] uppercase tracking-[0.22em]">
           <span className="text-white/35">
-            {phase <= 1 ? 'Scanning…' : phase === 2 ? `Identity match: ${progress}%` : 'Identity verified — access granted'}
+            {phase <= 1 ? 'Face detection active' : phase === 2 ? `Landmark mapping: ${progress}%` : 'Identity verified — access granted'}
           </span>
-          {phase === 3 && (
-            <span className="text-[#5299FF] font-medium">✓ Authorised</span>
-          )}
+          {phase === 3 && <span className="text-[#5299FF] font-medium">✓ Authorised</span>}
         </div>
         <div className="h-[3px] rounded-full overflow-hidden bg-white/[0.07]">
           <div
             className="h-full rounded-full transition-all duration-300"
             style={{
-              width: phase === 0 ? '4%' : phase === 1 ? '38%' : phase === 2 ? `${progress}%` : '98%',
+              width: phase === 0 ? '3%' : phase === 1 ? `${Math.round(scanY * 40)}%` : phase === 2 ? `${progress}%` : '100%',
               background: 'linear-gradient(90deg, #2979FF, #7B2FBE, #5299FF)',
             }}
           />
@@ -413,37 +585,31 @@ function CommerceDemo() {
    ════════════════════════════════════════════════════════════════════════════ */
 export function SinglePage() {
   return (
-    <div className="mx-auto max-w-7xl px-6 pb-16">
+    <div className="mx-auto max-w-7xl px-6 pb-10">
       <HomeSection />
-
-      <div className="mt-10 md:mt-14 space-y-10 md:space-y-14">
-        <Divider />
-        <ServicesSection />
-        <Divider />
-        <ProductsSection />
-        <Divider />
-        <AboutSection />
-        <Divider />
-        <ContactSection />
-      </div>
+      <ServicesSection />
+      <ProductsSection />
+      <AboutSection />
+      <ContactSection />
     </div>
   );
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
-   #home — HERO + FEATURE STRIP
+   #home — HERO + FEATURE STRIP  (redesigned)
    ════════════════════════════════════════════════════════════════════════════ */
 const homeStats = [
-  { value: '6',           label: 'Service areas'         },
-  { value: '2',           label: 'Products in production' },
-  { value: 'AI-native',   label: 'Core capability'        },
-  { value: 'India-first', label: 'Studio origin'          },
+  { value: '6',           label: 'Service areas',          icon: '◈' },
+  { value: '2',           label: 'Products in production',  icon: '◉' },
+  { value: 'AI-native',   label: 'Core capability',         icon: '◆' },
+  { value: 'India-first', label: 'Studio origin',           icon: '◇' },
 ];
 
 const homeFeatures = [
   {
     label: 'AI Systems',
     body: 'LLM integrations, RAG pipelines, and prediction models built for real workflows.',
+    gradFrom: '#2979ff', gradTo: '#7b2fbe',
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M16.9 16.9l2.1 2.1M4.9 19.1l2.1-2.1M16.9 7.1l2.1-2.1" />
@@ -453,6 +619,7 @@ const homeFeatures = [
   {
     label: 'Automation',
     body: 'Replace repetitive ops with reliable systems that run without supervision.',
+    gradFrom: '#7b2fbe', gradTo: '#e91e8c',
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
         <path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4z" /><path d="M17 14v2m0 4v-2m0 0h-2m4 0h-2" />
@@ -462,6 +629,7 @@ const homeFeatures = [
   {
     label: 'Product Engineering',
     body: 'Full-stack SaaS with auth, billing, dashboards, and design systems.',
+    gradFrom: '#e91e8c', gradTo: '#ff6d3b',
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
         <rect x="2" y="3" width="20" height="14" rx="2" /><path d="M8 21h8M12 17v4" />
@@ -472,44 +640,143 @@ const homeFeatures = [
 
 function HomeSection() {
   return (
-    <section id="home" className="scroll-mt-20 pt-8 md:pt-14">
-      {/* Hero card */}
-      <div className="relative overflow-hidden rounded-[2rem] border border-hairline/80 bg-surface px-5 py-10 shadow-[0_30px_80px_color-mix(in_srgb,var(--ink)_5%,transparent)] sm:px-6 md:rounded-[2.5rem] md:px-14 md:py-20">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,color-mix(in_srgb,var(--accent-3)_10%,transparent),transparent_50%),radial-gradient(ellipse_at_bottom_left,color-mix(in_srgb,var(--accent-2)_7%,transparent),transparent_45%)]" />
-        <p className="relative mb-5 text-xs uppercase tracking-[0.4em] brand-grad-text motion-safe:animate-fade-up">NUVAM</p>
-        <h1 className="relative max-w-4xl font-display text-4xl leading-[1.05] tracking-tight sm:text-5xl md:text-7xl motion-safe:animate-fade-up">
-          {siteCopy.heroTitle}
-        </h1>
-        <p className="relative mt-4 max-w-2xl text-base leading-7 text-muted sm:mt-6 sm:text-lg sm:leading-8 motion-safe:animate-fade-up [animation-delay:100ms]">
-          {siteCopy.heroSubtitle}
-        </p>
-        <div className="relative mt-6 flex flex-col gap-3 sm:flex-row motion-safe:animate-fade-up [animation-delay:200ms]">
-          <Button to="#services" variant="primary">Explore Services</Button>
-          <Button to="#products" variant="ghost">See Products</Button>
+    <section id="home" className="scroll-mt-20 pt-0">
+
+      {/* ── HERO CARD ─────────────────────────────────────────────── */}
+      <div className="relative overflow-hidden rounded-[2rem] border border-hairline/60 bg-surface md:rounded-[2.5rem]"
+        style={{ boxShadow: '0 40px 100px color-mix(in srgb, var(--accent) 8%, transparent), 0 2px 0 color-mix(in srgb, var(--hairline) 60%, transparent)' }}
+      >
+        {/* ── Animated gradient orbs ─────────────────────────────── */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          {/* Orb 1 — blue, top-right */}
+          <div className="absolute -top-32 -right-24 h-[480px] w-[480px] rounded-full"
+            style={{
+              background: 'radial-gradient(circle, rgba(41,121,255,0.18) 0%, rgba(41,121,255,0.06) 40%, transparent 70%)',
+              animation: 'heroOrb1 9s ease-in-out infinite',
+            }}
+          />
+          {/* Orb 2 — purple, center */}
+          <div className="absolute top-1/3 left-1/4 h-[380px] w-[380px] rounded-full"
+            style={{
+              background: 'radial-gradient(circle, rgba(123,47,190,0.14) 0%, rgba(123,47,190,0.05) 45%, transparent 70%)',
+              animation: 'heroOrb2 12s ease-in-out infinite',
+            }}
+          />
+          {/* Orb 3 — pink, bottom-left */}
+          <div className="absolute -bottom-24 -left-16 h-[340px] w-[340px] rounded-full"
+            style={{
+              background: 'radial-gradient(circle, rgba(233,30,140,0.13) 0%, rgba(233,30,140,0.04) 45%, transparent 70%)',
+              animation: 'heroOrb3 10s ease-in-out infinite',
+            }}
+          />
+          {/* Orb 4 — gold, bottom-right */}
+          <div className="absolute bottom-0 right-8 h-[220px] w-[220px] rounded-full"
+            style={{
+              background: 'radial-gradient(circle, rgba(255,185,0,0.08) 0%, transparent 70%)',
+              animation: 'heroOrb1 14s ease-in-out infinite reverse',
+            }}
+          />
+          {/* Mesh grid overlay — very subtle */}
+          <div className="absolute inset-0 opacity-[0.025]"
+            style={{
+              backgroundImage: 'linear-gradient(var(--hairline) 1px, transparent 1px), linear-gradient(90deg, var(--hairline) 1px, transparent 1px)',
+              backgroundSize: '48px 48px',
+            }}
+          />
+          {/* Gradient top border stripe */}
+          <div className="absolute top-0 left-0 right-0 h-[2px]"
+            style={{ background: 'var(--brand-grad)', opacity: 0.7 }}
+          />
         </div>
-        {/* Stats */}
-        <div className="relative mt-8 grid grid-cols-2 gap-3 border-t border-hairline/50 pt-6 sm:gap-4 sm:pt-8 md:grid-cols-4">
-          {homeStats.map((s) => (
-            <div key={s.label}>
-              <p className="font-display text-2xl brand-grad-text">{s.value}</p>
-              <p className="mt-1.5 text-xs uppercase tracking-[0.2em] text-muted">{s.label}</p>
-            </div>
-          ))}
+
+        {/* ── Content ───────────────────────────────────────────────── */}
+        <div className="relative px-6 pt-10 pb-0 sm:px-10 md:px-16 md:pt-16">
+
+          {/* Eyebrow badge */}
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-hairline/60 bg-bg/60 px-4 py-1.5 backdrop-blur-sm">
+            <span className="h-1.5 w-1.5 rounded-full" style={{ background: 'var(--brand-grad)' }} />
+            <span className="text-[10px] uppercase tracking-[0.45em] font-medium text-muted">NUVAM Technology Studio</span>
+          </div>
+
+          {/* Headline */}
+          <h1 className="max-w-4xl font-display text-4xl leading-[1.05] tracking-tight text-ink sm:text-5xl md:text-[4.5rem] lg:text-[5.25rem]">
+            {siteCopy.heroTitle}
+          </h1>
+
+          {/* Subheadline */}
+          <p className="mt-5 max-w-2xl text-base leading-7 text-muted sm:mt-7 sm:text-lg sm:leading-8">
+            {siteCopy.heroSubtitle}
+          </p>
+
+          {/* CTA row */}
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <Button to="#services" variant="primary">Explore Services</Button>
+            <Button to="#products" variant="ghost">See Products</Button>
+            {/* Trusted-by text */}
+            <p className="text-xs text-muted/60 sm:ml-2">
+              <span className="font-medium text-ink/70">India-built</span> · globally shipped
+            </p>
+          </div>
+
+          {/* Stats row */}
+          <div className="mt-10 grid grid-cols-2 gap-3 border-t border-hairline/40 pt-8 sm:grid-cols-4 md:gap-4">
+            {homeStats.map((s) => (
+              <div key={s.label} className="group flex flex-col gap-1">
+                <p className="font-display text-2xl font-medium text-ink sm:text-3xl">{s.value}</p>
+                <p className="text-[10px] uppercase tracking-[0.22em] text-muted">{s.label}</p>
+              </div>
+            ))}
+          </div>
         </div>
+
+        {/* Decorative bottom fade */}
+        <div className="pointer-events-none h-8" />
       </div>
 
-      {/* Feature strip */}
-      <div className="mt-6 grid gap-3 sm:grid-cols-2 md:grid-cols-3">
-        {homeFeatures.map((f) => (
+      {/* ── FEATURE CARDS ──────────────────────────────────────────── */}
+      <div className="mt-4 grid gap-3 sm:grid-cols-2 md:grid-cols-3">
+        {homeFeatures.map((f, i) => (
           <div
             key={f.label}
-            className="group rounded-[1.5rem] border border-hairline bg-surface p-5 transition-all duration-300 hover:-translate-y-1 hover:border-[var(--accent)] hover:shadow-[0_16px_40px_color-mix(in_srgb,var(--accent)_10%,transparent)] sm:p-6"
+            className="group relative overflow-hidden rounded-[1.5rem] border border-hairline bg-surface p-6 transition-all duration-300 hover:-translate-y-1 hover:border-transparent sm:rounded-[1.75rem] sm:p-7"
+            style={{
+              boxShadow: undefined,
+              ['--card-from' as string]: f.gradFrom,
+              ['--card-to' as string]: f.gradTo,
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLElement).style.boxShadow = `0 20px 50px color-mix(in srgb, ${f.gradFrom} 12%, transparent), 0 0 0 1px color-mix(in srgb, ${f.gradFrom} 40%, transparent)`;
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.boxShadow = '';
+            }}
           >
-            <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-2xl border border-hairline bg-bg text-muted transition-colors duration-300 group-hover:border-[var(--accent)] group-hover:text-[var(--accent)]">
+            {/* Ambient glow layer */}
+            <div
+              className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 rounded-[inherit]"
+              style={{ background: `radial-gradient(ellipse at top left, color-mix(in srgb, ${f.gradFrom} 8%, transparent), transparent 65%)` }}
+            />
+            {/* Icon with gradient bg */}
+            <div
+              className="mb-5 flex h-11 w-11 items-center justify-center rounded-2xl text-white shadow-sm"
+              style={{ background: `linear-gradient(135deg, ${f.gradFrom}, ${f.gradTo})`, boxShadow: `0 6px 20px color-mix(in srgb, ${f.gradFrom} 30%, transparent)` }}
+            >
               {f.icon}
             </div>
+            {/* Number label */}
+            <p className="mb-1 text-[10px] uppercase tracking-[0.35em]" style={{ color: f.gradFrom, opacity: 0.6 }}>0{i + 1}</p>
             <h3 className="font-display text-xl">{f.label}</h3>
             <p className="mt-2 text-sm leading-6 text-muted">{f.body}</p>
+            {/* Arrow hint */}
+            <div
+              className="mt-5 flex items-center gap-1.5 text-xs font-medium opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-1"
+              style={{ color: f.gradFrom }}
+            >
+              Learn more
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                <path d="M2 6h8M7 3l3 3-3 3" />
+              </svg>
+            </div>
           </div>
         ))}
       </div>
@@ -518,66 +785,124 @@ function HomeSection() {
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
-   #services — SERVICE CARDS + PROCESS TIMELINE
+   #services — COLLAPSIBLE SERVICE CARDS + PROCESS TIMELINE
    ════════════════════════════════════════════════════════════════════════════ */
 function ServicesSection() {
   const { services, process } = siteCopy;
+  const [openId, setOpenId] = useState<string | null>(null);
 
   return (
-    <section id="services" className="scroll-mt-20">
+    <section id="services" className="scroll-mt-20 pt-0">
       <SectionHeading
         eyebrow="Services"
         title="A wider set of capabilities."
         body="AI, software, cloud, and automation — delivered as one cohesive system, not disconnected parts."
       />
 
-      {/* Service cards */}
-      <div className="mt-8 grid gap-4 md:grid-cols-2 md:gap-5">
-        {services.map((svc) => (
-          <article
-            key={svc.id}
-            className="group rounded-[2rem] border border-hairline bg-surface p-8 transition-all duration-300 hover:-translate-y-1 hover:border-[var(--accent)] hover:shadow-[0_20px_50px_color-mix(in_srgb,var(--accent)_8%,transparent)]"
-          >
-            <p className="mb-4 font-display text-4xl brand-grad-text opacity-40">{svc.label}</p>
-            <h3 className="font-display text-2xl leading-tight">{svc.title}</h3>
-            <p className="mt-3 text-base leading-7 text-muted">{svc.summary}</p>
-            <ul className="mt-6 space-y-2.5 border-t border-hairline pt-5">
-              {svc.bullets.map((b) => (
-                <li key={b} className="flex items-start gap-3 text-sm text-muted">
-                  <span className="mt-[5px] h-1.5 w-1.5 shrink-0 rounded-full brand-grad" />
-                  {b}
-                </li>
-              ))}
-            </ul>
-          </article>
-        ))}
+      {/* Collapsible service cards */}
+      <div className="mt-8 grid gap-3 md:grid-cols-2 md:gap-4">
+        {services.map((svc) => {
+          const isOpen = openId === svc.id;
+          return (
+            <article
+              key={svc.id}
+              className={`relative overflow-hidden rounded-[1.75rem] border bg-surface transition-all duration-400 sm:rounded-[2rem] ${
+                isOpen
+                  ? 'border-[color-mix(in_srgb,var(--accent)_55%,var(--hairline))] shadow-[0_20px_60px_color-mix(in_srgb,var(--accent)_9%,transparent)]'
+                  : 'border-hairline hover:border-[var(--accent)/50] hover:-translate-y-0.5 hover:shadow-[0_12px_36px_color-mix(in_srgb,var(--accent)_5%,transparent)] cursor-pointer'
+              }`}
+            >
+              {/* Ambient glow */}
+              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,color-mix(in_srgb,var(--accent)_5%,transparent),transparent_60%)]" />
+
+              {/* Always-visible header — click to toggle */}
+              <button
+                type="button"
+                onClick={() => setOpenId(isOpen ? null : svc.id)}
+                className="relative w-full text-left px-6 pt-6 pb-5 sm:px-8 sm:pt-7 sm:pb-6"
+                aria-expanded={isOpen}
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1 min-w-0">
+                    <p className="mb-2 font-display text-3xl brand-grad-text opacity-35 leading-none">{svc.label}</p>
+                    <h3 className="font-display text-xl leading-tight">{svc.title}</h3>
+                    <p className="mt-2 text-sm leading-6 text-muted line-clamp-2">{svc.summary}</p>
+                  </div>
+                  {/* Expand chevron */}
+                  <span
+                    className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-hairline text-muted transition-all duration-300"
+                    style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)', borderColor: isOpen ? 'var(--accent)' : undefined, color: isOpen ? 'var(--accent)' : undefined }}
+                  >
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                      <path d="M2 4l4 4 4-4" />
+                    </svg>
+                  </span>
+                </div>
+
+                {/* Tags / pill row */}
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {svc.bullets.slice(0, 2).map((b) => (
+                    <span key={b} className="rounded-full border border-hairline px-2.5 py-0.5 text-[10px] uppercase tracking-[0.2em] text-muted">
+                      {b.split(' ').slice(0, 3).join(' ')}
+                    </span>
+                  ))}
+                  {!isOpen && svc.bullets.length > 2 && (
+                    <span className="rounded-full border border-hairline px-2.5 py-0.5 text-[10px] uppercase tracking-[0.2em] brand-grad-text">
+                      +{svc.bullets.length - 2} more
+                    </span>
+                  )}
+                </div>
+              </button>
+
+              {/* Expandable bullets */}
+              <div
+                className="overflow-hidden transition-all duration-500 ease-in-out"
+                style={{ maxHeight: isOpen ? '500px' : '0px', opacity: isOpen ? 1 : 0 }}
+              >
+                <div className="border-t border-hairline/50 px-6 pt-5 pb-6 sm:px-8 sm:pb-7">
+                  <ul className="space-y-2.5">
+                    {svc.bullets.map((b) => (
+                      <li key={b} className="flex items-start gap-3 text-sm text-muted">
+                        <span className="mt-[5px] h-1.5 w-1.5 shrink-0 rounded-full brand-grad" />
+                        {b}
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-5 flex gap-3">
+                    <Button to="#contact" variant="primary">Get in touch</Button>
+                  </div>
+                </div>
+              </div>
+            </article>
+          );
+        })}
       </div>
 
       {/* How we work */}
-      <div className="mt-16 rounded-[2rem] border border-hairline bg-surface p-8 md:p-12">
+      <div className="mt-8 rounded-[1.75rem] border border-hairline bg-surface p-6 sm:rounded-[2rem] md:p-10">
         <p className="mb-3 text-xs uppercase tracking-[0.35em] brand-grad-text">How we work</p>
-        <h3 className="font-display text-3xl md:text-4xl">A delivery flow that actually works.</h3>
-        <p className="mt-4 max-w-2xl text-base leading-7 text-muted">Numbered phases. Real milestones. Working software at every checkpoint — not documentation.</p>
-      <div className="mt-8 grid gap-6 md:grid-cols-4 md:gap-10">
+        <h3 className="font-display text-2xl md:text-3xl">A delivery flow that actually works.</h3>
+        <p className="mt-3 max-w-2xl text-sm leading-7 text-muted">Numbered phases. Real milestones. Working software at every checkpoint — not documentation.</p>
+        <div className="mt-6 grid gap-5 md:grid-cols-4 md:gap-8">
           {process.map((step, i) => (
             <div key={step.step} className="relative">
               {i < process.length - 1 && (
                 <div className="absolute left-[calc(2.5rem+8px)] top-5 hidden h-[1px] w-[calc(100%-2.5rem-8px)] bg-hairline/60 md:block" />
               )}
-              <div className="relative z-10 mb-4 inline-flex h-10 w-10 items-center justify-center rounded-full border border-hairline bg-bg text-xs font-medium brand-grad-text">
+              <div className="relative z-10 mb-3 inline-flex h-9 w-9 items-center justify-center rounded-full border border-hairline bg-bg text-xs font-medium brand-grad-text">
                 {step.step}
               </div>
-              <h4 className="font-display text-lg">{step.title}</h4>
-              <p className="mt-2 text-sm leading-6 text-muted">{step.body}</p>
+              <h4 className="font-display text-base">{step.title}</h4>
+              <p className="mt-1.5 text-sm leading-6 text-muted">{step.body}</p>
             </div>
           ))}
         </div>
       </div>
 
       {/* CTA */}
-      <div className="mt-6 flex flex-col gap-4 rounded-[1.5rem] border border-hairline bg-surface px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-8 sm:py-6 sm:rounded-[2rem]">
+      <div className="mt-4 flex flex-col gap-4 rounded-[1.5rem] border border-hairline bg-surface px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-8 sm:py-5 sm:rounded-[2rem]">
         <div>
-          <h3 className="font-display text-2xl">Ready to get started?</h3>
+          <h3 className="font-display text-xl">Ready to get started?</h3>
           <p className="mt-1 text-sm text-muted">Tell us about your project and let's find the right fit.</p>
         </div>
         <Button to="#contact" variant="primary">Talk to us</Button>
@@ -616,7 +941,7 @@ function ProductsSection() {
   const cmOpen = expanded === 'commerce';
 
   return (
-    <section id="products" className="scroll-mt-20">
+    <section id="products" className="scroll-mt-20 pt-0">
       <SectionHeading
         eyebrow="Products"
         title="Built in-house. Ready for yours."
@@ -773,7 +1098,7 @@ function AboutSection() {
   const { about } = siteCopy;
 
   return (
-    <section id="about" className="scroll-mt-20">
+    <section id="about" className="scroll-mt-20 pt-0">
       <SectionHeading eyebrow="About" title={about.headline} body={about.subheadline} />
 
       {/* Stats */}
@@ -860,7 +1185,7 @@ function ContactSection() {
   const labelCls = 'block mb-1.5 text-xs uppercase tracking-[0.2em] text-muted';
 
   return (
-    <section id="contact" className="scroll-mt-20 pb-6">
+    <section id="contact" className="scroll-mt-20 pt-0">
       <SectionHeading eyebrow="Contact" title={contact.headline} body={contact.subheadline} />
 
       <div className="mt-8 grid gap-4 lg:grid-cols-[1fr_300px] lg:gap-6">

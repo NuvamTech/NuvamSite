@@ -21,7 +21,6 @@ export function Footer() {
           <div>
             <a href="#home" onClick={(e) => scrollTo(e, 'home')} className="inline-flex items-center gap-3">
               <img src="/logo.png" alt="NUVAM" className="h-10 w-10 rounded-full object-cover ring-1 ring-hairline/70" />
-              <span className="font-display text-lg font-medium">NUVAM</span>
             </a>
             <p className="mt-4 max-w-xs text-sm leading-6 text-muted">
               AI-native products, automation systems, and web experiences built to last.
