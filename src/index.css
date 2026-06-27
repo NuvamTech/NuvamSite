@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #f6f5fb;
+  --bg: #f9f9fc;
   --surface: #ffffff;
   --ink: #0f0e1a;
-  --hairline: #e0ddef;
+  --hairline: #e2e1ec;
   --muted: #6b6780;
   --accent: #7b2fbe;
   --accent-2: #e91e8c;
@@ -18,31 +18,34 @@
   --brand-grad: linear-gradient(90deg, var(--grad-start), var(--grad-mid1), var(--grad-mid2), var(--grad-mid3), var(--grad-end));
   --font-display: "Georgia", "Times New Roman", serif;
   --font-body: "Inter", "Segoe UI", system-ui, sans-serif;
-  /* Subtle page background gradient (light) */
-  --page-bg: radial-gradient(ellipse 120% 60% at 80% -10%, rgba(123,47,190,0.055) 0%, transparent 60%),
-             radial-gradient(ellipse 90%  50% at -10% 80%, rgba(41,121,255,0.045) 0%, transparent 55%),
+  /* Microsoft Fluent light mesh design background */
+  --page-bg: radial-gradient(circle at 90% 0%, rgba(66,133,244,0.1) 0%, transparent 45%),
+             radial-gradient(circle at 10% 30%, rgba(168,85,247,0.06) 0%, transparent 40%),
+             radial-gradient(circle at 85% 65%, rgba(233,30,140,0.05) 0%, transparent 35%),
+             radial-gradient(circle at 30% 90%, rgba(20,184,166,0.05) 0%, transparent 40%),
              var(--bg);
 }
 
 :root[data-theme='dark'] {
-  --bg: #0b0a17;
-  --surface: #111025;
-  --ink: #f0eeff;
-  --hairline: #242238;
-  --muted: #9e9ab8;
-  --accent: #9b5fde;
-  --accent-2: #f04fa0;
-  --accent-3: #5299ff;
-  --accent-gold: #ffc933;
-  --grad-start: #5299ff;
-  --grad-mid1: #9b5fde;
-  --grad-mid2: #f04fa0;
-  --grad-mid3: #ff7a4a;
-  --grad-end: #ffc933;
-  /* Subtle page background gradient (dark) */
-  --page-bg: radial-gradient(ellipse 130% 55% at 85% -5%, rgba(155,95,222,0.10) 0%, transparent 55%),
-             radial-gradient(ellipse 100% 50% at -5% 85%, rgba(82,153,255,0.07) 0%, transparent 55%),
-             radial-gradient(ellipse 80%  40% at 50% 110%, rgba(240,79,160,0.06) 0%, transparent 50%),
+  --bg: #030206;
+  --surface: #0a0914;
+  --ink: #f5f4fa;
+  --hairline: #1c192d;
+  --muted: #a4a1bd;
+  --accent: #2979ff;
+  --accent-2: #e91e8c;
+  --accent-3: #ff6d3b;
+  --accent-gold: #ffb900;
+  --grad-start: #2979ff;
+  --grad-mid1: #7b2fbe;
+  --grad-mid2: #e91e8c;
+  --grad-mid3: #ff6d3b;
+  --grad-end: #ffb900;
+  /* High contrast mesh design background using vibrant colors from the logo */
+  --page-bg: radial-gradient(circle at 80% 10%, rgba(41, 121, 255, 0.22) 0%, transparent 55%),
+             radial-gradient(circle at 15% 30%, rgba(233, 30, 140, 0.18) 0%, transparent 50%),
+             radial-gradient(circle at 75% 65%, rgba(255, 109, 59, 0.14) 0%, transparent 45%),
+             radial-gradient(circle at 20% 85%, rgba(41, 121, 255, 0.18) 0%, transparent 50%),
              var(--bg);
 }
 
@@ -144,4 +147,65 @@ section[id] {
 
 .motion-safe\:animate-fade-up {
   animation: fade-up 0.55s ease both;
+}
+
+/* ── Global Scrollbar Styles (Adaptive Theme Support) ── */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--hairline) 75%, transparent);
+  border: 3px solid transparent;
+  background-clip: padding-box;
+  border-radius: 9999px;
+  transition: background 0.3s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+  border: 3px solid transparent;
+  background-clip: padding-box;
+}
+
+/* Premium Selection Colors */
+::selection {
+  background: var(--accent-3);
+  color: #fff;
+}
+
+html[data-theme='dark'] ::selection {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+/* Smooth transition for theme colors */
+body, header, footer, section, div, span, p, a, button, input, select, textarea {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-duration: 200ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Floating Glassmorphic Animations ── */
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-25px) rotate(15deg); }
+}
+
+@keyframes float-reverse {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(20px) rotate(-15deg); }
+}
+
+.animate-float-slow {
+  animation: float-slow 18s ease-in-out infinite;
+}
+
+.animate-float-reverse {
+  animation: float-reverse 22s ease-in-out infinite;
 }
