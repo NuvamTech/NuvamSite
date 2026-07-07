@@ -166,7 +166,7 @@ export const siteCopy = {
     subheadline: 'Tell us what you are building or trying to solve. We will read it carefully and respond within 24 hours.',
     details: {
       email: 'nuvam.com@gmail.com',
-      location: 'India & UAE Support Teams',
+      location: 'India Support Teams',
       responseTime: 'Within 24 hours',
     }
   }

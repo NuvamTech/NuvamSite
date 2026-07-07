@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { siteCopy } from '../../content/siteCopy';
+import { useNavigate } from 'react-router-dom';
 
 export function Header() {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
@@ -8,6 +9,7 @@ export function Header() {
   const [hoveredMenu, setHoveredMenu] = useState<string | null>(null);
   const [expandedMobileItem, setExpandedMobileItem] = useState<string | null>(null);
   const drawerRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   /* Scroll to top on mount */
   useEffect(() => {
@@ -73,6 +75,35 @@ export function Header() {
         top: offsetPosition,
         behavior: 'smooth'
       });
+    } else {
+      navigate(`/#${id}`);
+    }
+    setMenuOpen(false);
+    setHoveredMenu(null);
+  };
+
+  /* Navigate to service page */
+  const handleServiceClick = (serviceId: string) => {
+    navigate(`/services/${serviceId}`);
+    setMenuOpen(false);
+    setHoveredMenu(null);
+  };
+
+  const handleProductClick = (productId?: string) => {
+    if (productId) {
+      navigate(`/products/${productId}`);
+    } else {
+      navigate('/products');
+    }
+    setMenuOpen(false);
+    setHoveredMenu(null);
+  };
+
+  const handleResourceClick = (hashId?: string) => {
+    if (hashId) {
+      navigate(`/resources#${hashId}`);
+    } else {
+      navigate('/resources');
     }
     setMenuOpen(false);
     setHoveredMenu(null);
@@ -94,7 +125,7 @@ export function Header() {
             <img
               src="/logo.png"
               alt="NUVAM logo"
-              className="h-14 w-14 object-contain transition-transform duration-300 hover:scale-[1.05]"
+              className="h-[48px] w-auto object-contain transition-transform duration-300 hover:scale-[1.05]"
               onError={(e) => {
                 // Fallback text if logo doesn't load
                 (e.target as HTMLElement).style.display = 'none';
@@ -162,8 +193,8 @@ export function Header() {
                             {cat.items.slice(0, 4).map((item) => (
                               <li key={item.id}>
                                 <a
-                                  href="#services"
-                                  onClick={(e) => handleNavClick(e, 'services')}
+                                  href="#"
+                                  onClick={(e) => { e.preventDefault(); handleServiceClick(item.id); }}
                                   className="block text-xs font-medium text-ink hover:text-[var(--accent)] transition-colors"
                                 >
                                   {item.title}
@@ -175,7 +206,7 @@ export function Header() {
                       ))}
                       <div className="col-span-3 border-t border-hairline pt-4 flex justify-between items-center text-xs">
                         <span className="text-muted">Need custom AI or Enterprise Integration?</span>
-                        <a href="#services" onClick={(e) => handleNavClick(e, 'services')} className="font-semibold text-[var(--accent)] hover:underline">View All Capabilities →</a>
+                        <a href="/services" className="font-semibold text-[var(--accent)] hover:underline">View All Capabilities →</a>
                       </div>
                     </div>
                   </div>
@@ -189,8 +220,8 @@ export function Header() {
                 onMouseLeave={() => setHoveredMenu(null)}
               >
                 <a
-                  href="#products"
-                  onClick={(e) => handleNavClick(e, 'products')}
+                  href="/products"
+                  onClick={(e) => { e.preventDefault(); handleProductClick(); }}
                   className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
                     active === 'products' 
                       ? 'bg-surface/50 border border-hairline/60 shadow-xs text-[var(--accent)] font-semibold' 
@@ -212,8 +243,8 @@ export function Header() {
                           {siteCopy.products.isv.map((item) => (
                             <li key={item.id}>
                               <a
-                                href="#products"
-                                onClick={(e) => handleNavClick(e, 'products')}
+                                href="#"
+                                onClick={(e) => { e.preventDefault(); handleProductClick(item.id); }}
                                 className="block text-xs font-medium text-ink hover:text-[var(--accent)] transition-colors"
                               >
                                 {item.title.split(' ')[0]} {item.title.includes('(') ? item.title.substring(item.title.indexOf('(')) : ''}
@@ -228,8 +259,8 @@ export function Header() {
                           {siteCopy.products.industry.map((item) => (
                             <li key={item.id}>
                               <a
-                                href="#products"
-                                onClick={(e) => handleNavClick(e, 'products')}
+                                href="#"
+                                onClick={(e) => { e.preventDefault(); handleProductClick(item.id); }}
                                 className="block text-xs font-medium text-ink hover:text-[var(--accent)] transition-colors"
                               >
                                 {item.title}
@@ -249,18 +280,26 @@ export function Header() {
                 onMouseEnter={() => setHoveredMenu('resources')}
                 onMouseLeave={() => setHoveredMenu(null)}
               >
-                <span className="rounded-full px-3.5 py-1.5 text-sm font-medium text-muted hover:text-ink cursor-pointer flex items-center gap-1">
+                <a
+                  href="/resources"
+                  onClick={(e) => { e.preventDefault(); handleResourceClick(); }}
+                  className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
+                    active === 'resources' 
+                      ? 'bg-surface/50 border border-hairline/60 shadow-xs text-[var(--accent)] font-semibold' 
+                      : 'border border-transparent text-muted hover:text-ink hover:bg-surface/30'
+                  }`}
+                >
                   Resources
                   <svg className={`h-3 w-3 transition-transform duration-300 ${hoveredMenu === 'resources' ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                   </svg>
-                </span>
+                </a>
                 {hoveredMenu === 'resources' && (
                   <div className="absolute right-0 top-full pt-2 w-44">
                     <div className="bg-surface border border-hairline/80 rounded-xl p-2.5 shadow-xl space-y-1.5 animate-fade-up">
-                      <a href="#about" onClick={(e) => handleNavClick(e, 'about')} className="block px-3 py-1.5 text-xs rounded-lg hover:bg-bg transition-colors font-medium">Industries</a>
-                      <a href="#products" onClick={(e) => handleNavClick(e, 'products')} className="block px-3 py-1.5 text-xs rounded-lg hover:bg-bg transition-colors font-medium">Case Studies</a>
-                      <a href="#home" onClick={(e) => handleNavClick(e, 'home')} className="block px-3 py-1.5 text-xs rounded-lg hover:bg-bg transition-colors font-medium">Blogs & News</a>
+                      <a href="#" onClick={(e) => { e.preventDefault(); handleResourceClick('industries'); }} className="block px-3 py-1.5 text-xs rounded-lg hover:bg-bg transition-colors font-medium">Industries</a>
+                      <a href="#" onClick={(e) => { e.preventDefault(); handleResourceClick('case-studies'); }} className="block px-3 py-1.5 text-xs rounded-lg hover:bg-bg transition-colors font-medium">Case Studies</a>
+                      <a href="#" onClick={(e) => { e.preventDefault(); handleResourceClick('blogs'); }} className="block px-3 py-1.5 text-xs rounded-lg hover:bg-bg transition-colors font-medium">Blogs & News</a>
                     </div>
                   </div>
                 )}
@@ -411,8 +450,8 @@ export function Header() {
                     {cat.items.slice(0, 3).map((item) => (
                       <a
                         key={item.id}
-                        href="#services"
-                        onClick={(e) => handleNavClick(e, 'services')}
+                        href="#"
+                        onClick={(e) => { e.preventDefault(); handleServiceClick(item.id); }}
                         className="block px-2 py-1 text-xs text-muted hover:text-ink"
                       >
                         {item.title}
@@ -437,12 +476,19 @@ export function Header() {
             </button>
             {expandedMobileItem === 'products' && (
               <div className="pl-6 pr-2 py-1 space-y-1 bg-surface/50 rounded-xl mt-1">
-                <p className="text-[10px] font-semibold text-[var(--accent)] uppercase px-2">Products ISV</p>
+                <a
+                  href="#"
+                  onClick={(e) => { e.preventDefault(); handleProductClick(); }}
+                  className="block px-2 py-1 text-xs font-semibold text-[var(--accent)] hover:text-ink"
+                >
+                  View All Products →
+                </a>
+                <p className="text-[10px] font-semibold text-[var(--accent)] uppercase px-2 mt-2">Products ISV</p>
                 {siteCopy.products.isv.map((item) => (
                   <a
                     key={item.id}
-                    href="#products"
-                    onClick={(e) => handleNavClick(e, 'products')}
+                    href="#"
+                    onClick={(e) => { e.preventDefault(); handleProductClick(item.id); }}
                     className="block px-2 py-1 text-xs text-muted hover:text-ink"
                   >
                     {item.title}
@@ -452,13 +498,58 @@ export function Header() {
                 {siteCopy.products.industry.map((item) => (
                   <a
                     key={item.id}
-                    href="#products"
-                    onClick={(e) => handleNavClick(e, 'products')}
+                    href="#"
+                    onClick={(e) => { e.preventDefault(); handleProductClick(item.id); }}
                     className="block px-2 py-1 text-xs text-muted hover:text-ink"
                   >
                     {item.title}
                   </a>
                 ))}
+              </div>
+            )}
+          </div>
+
+          {/* Collapsible Resources */}
+          <div>
+            <button
+              onClick={() => setExpandedMobileItem(expandedMobileItem === 'resources' ? null : 'resources')}
+              className="w-full flex items-center justify-between rounded-xl px-4 py-2.5 text-sm font-medium text-muted hover:bg-surface"
+            >
+              <span>Resources</span>
+              <svg className={`h-4 w-4 transition-transform ${expandedMobileItem === 'resources' ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            {expandedMobileItem === 'resources' && (
+              <div className="pl-6 pr-2 py-1 space-y-1 bg-surface/50 rounded-xl mt-1">
+                <a
+                  href="#"
+                  onClick={(e) => { e.preventDefault(); handleResourceClick(); }}
+                  className="block px-2 py-1 text-xs font-semibold text-[var(--accent)] hover:text-ink"
+                >
+                  View Resources Hub →
+                </a>
+                <a
+                  href="#"
+                  onClick={(e) => { e.preventDefault(); handleResourceClick('industries'); }}
+                  className="block px-2 py-1 text-xs text-muted hover:text-ink"
+                >
+                  Industries
+                </a>
+                <a
+                  href="#"
+                  onClick={(e) => { e.preventDefault(); handleResourceClick('case-studies'); }}
+                  className="block px-2 py-1 text-xs text-muted hover:text-ink"
+                >
+                  Case Studies
+                </a>
+                <a
+                  href="#"
+                  onClick={(e) => { e.preventDefault(); handleResourceClick('blogs'); }}
+                  className="block px-2 py-1 text-xs text-muted hover:text-ink"
+                >
+                  Blogs & News
+                </a>
               </div>
             )}
           </div>

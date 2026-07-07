@@ -465,34 +465,6 @@ export function SinglePage() {
         </div>
       </section>
 
-      {/* ── TESTIMONIALS SLIDER ────────────────────────────────────────── */}
-      <section className="py-12 md:py-16 border-t border-hairline/40">
-        <div className="text-center max-w-2xl mx-auto mb-10">
-          <span className="text-xs uppercase tracking-[0.3em] font-semibold text-[var(--accent)]">Reviews</span>
-          <h2 className="font-display text-2xl leading-tight md:text-4xl text-ink mt-2">What Clients Say About Working With NUVAM</h2>
-        </div>
-
-        <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-thin snap-x">
-          {siteCopy.testimonials.map((t, i) => (
-            <div 
-              key={i} 
-              className="min-w-[320px] max-w-[320px] bg-surface rounded-2xl border border-hairline p-6 flex flex-col justify-between snap-start hover:border-[var(--accent)] transition-all duration-300"
-            >
-              <p className="text-xs text-muted leading-relaxed italic mb-6">"{t.quote}"</p>
-              <div className="flex items-center gap-3">
-                <figure className="h-10 w-10 rounded-full overflow-hidden bg-bg border border-hairline flex-shrink-0">
-                  <img src={t.avatar} alt={t.author} className="h-full w-full object-cover" />
-                </figure>
-                <div>
-                  <h4 className="text-xs font-bold text-ink">{t.author}</h4>
-                  <p className="text-[10px] text-muted">{t.role}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
       {/* ── #contact: CONTACT FORM ─────────────────────────────────────── */}
       <section id="contact" className="scroll-mt-20 py-12 md:py-16 border-t border-hairline/40 relative overflow-hidden">
         {/* Glassmorphic Ornaments */}
