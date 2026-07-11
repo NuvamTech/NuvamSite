@@ -121,6 +121,7 @@ section[id] {
 /* ── Primary Button (Liquid Glassmorphism) ───────────────────────────── */
 .btn-primary {
   position: relative;
+  isolation: isolate; /* Create independent stacking context so z-index: -1 children stay inside button */
   font-weight: 600;
   text-align: center;
   text-decoration: none;
