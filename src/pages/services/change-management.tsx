@@ -1,9 +1,19 @@
+import { useNavigate } from 'react-router-dom';
+import { SEO } from '../../components/SEO';
 import { Button } from '../../components/ui/Button';
 
 export function ChangeManagementService() {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-surface">
-      <section className="relative py-20 md:py-28 overflow-hidden">
+      <SEO
+        title="Change Management & Adoption | NUVAM Tech"
+        description="Ensure smooth adoption of new software systems with custom training and cultural alignment for successful digital transformation."
+        keywords="change management consulting, digital adoption, organizational change, NUVAM Tech"
+        canonical="/services/change-management"
+      />
+      <section className="relative py-12 md:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent)]/5 to-[var(--accent-2)]/5 pointer-events-none" />
         <div className="mx-auto max-w-5xl px-4 sm:px-6 relative z-10">
           <div className="text-center max-w-3xl mx-auto">
@@ -38,8 +48,8 @@ export function ChangeManagementService() {
                   'Change impact assessment',
                   'Stakeholder engagement strategy',
                   'Adoption measurement framework',
-                  'Resistance management plan',
-                  'Communication planning',
+                  'Role-based training programs',
+                  'Resistance management strategy',
                   'Sustained reinforcement program'
                 ].map((item, i) => (
                   <div key={i} className="flex items-start gap-3">
@@ -61,34 +71,34 @@ export function ChangeManagementService() {
                     <div className="flex items-center gap-3 mb-3">
                       <div className="h-10 w-10 rounded-lg bg-[var(--accent)]/20 flex items-center justify-center">
                         <svg className="h-5 w-5 text-[var(--accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
                       </div>
-                      <h3 className="font-bold text-ink">Assessment</h3>
+                      <h3 className="font-bold text-ink">Stakeholder Alignment</h3>
                     </div>
-                    <p className="text-sm text-muted">Evaluate current change readiness and identify barriers</p>
+                    <p className="text-sm text-muted">Building consensus and ownership among leadership and key project stakeholders</p>
                   </div>
                   <div className="p-6 bg-gradient-to-r from-[var(--accent-2)]/5 to-[var(--accent-gold)]/5 rounded-xl border border-hairline/30">
                     <div className="flex items-center gap-3 mb-3">
                       <div className="h-10 w-10 rounded-lg bg-[var(--accent-2)]/20 flex items-center justify-center">
                         <svg className="h-5 w-5 text-[var(--accent-2)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                         </svg>
                       </div>
-                      <h3 className="font-bold text-ink">Planning</h3>
+                      <h3 className="font-bold text-ink">Communication Campaign</h3>
                     </div>
-                    <p className="text-sm text-muted">Develop comprehensive adoption strategy and plan</p>
+                    <p className="text-sm text-muted">Clear, consistent, and structured communication to build awareness and desire for change</p>
                   </div>
                   <div className="p-6 bg-gradient-to-r from-[var(--accent-gold)]/5 to-[var(--accent)]/5 rounded-xl border border-hairline/30">
                     <div className="flex items-center gap-3 mb-3">
                       <div className="h-10 w-10 rounded-lg bg-[var(--accent-gold)]/20 flex items-center justify-center">
                         <svg className="h-5 w-5 text-[var(--accent-gold)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                         </svg>
                       </div>
-                      <h3 className="font-bold text-ink">Execution</h3>
+                      <h3 className="font-bold text-ink">Role-Based Training</h3>
                     </div>
-                    <p className="text-sm text-muted">Implement change initiatives and monitor progress</p>
+                    <p className="text-sm text-muted">Customized training programs tailored to different user groups for high-efficiency learning</p>
                   </div>
                 </div>
               </div>
@@ -100,11 +110,11 @@ export function ChangeManagementService() {
       <section className="py-16 md:py-24 bg-surface/50 border-t border-hairline/40">
         <div className="mx-auto max-w-5xl px-4 sm:px-6">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="font-display text-3xl md:text-4xl font-bold text-ink mb-4">
-              Our Services
+            <h2 className="font-display text-3xl font-bold text-ink mb-4">
+              Our Core Deliverables
             </h2>
             <p className="text-muted">
-              Comprehensive change management solutions for successful adoption
+              Structured frameworks and tools to drive sustained change adoption
             </p>
           </div>
           
@@ -117,8 +127,8 @@ export function ChangeManagementService() {
               { title: 'Resistance Management', desc: 'Proactively identify and address resistance points before they become obstacles' },
               { title: 'Sustained Reinforcement', desc: 'Implement ongoing support and reinforcement to lock in new behaviors' }
             ].map((item, i) => (
-              <div key={i} className="bg-surface border border-hairline/50 rounded-2xl p-6 hover:shadow-lg transition-all duration-300">
-                <div className="h-10 w-10 rounded-lg bg-[var(--accent)]/10 flex items-center justify-center mb-4">
+              <div key={i} className="group bg-surface border border-hairline/50 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_20px_40px_-8px_rgba(123,47,190,0.18)] hover:border-[var(--accent)]/30">
+                <div className="h-10 w-10 rounded-lg bg-[var(--accent)]/10 flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-3">
                   <svg className="h-5 w-5 text-[var(--accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                   </svg>
@@ -140,7 +150,7 @@ export function ChangeManagementService() {
             Let's discuss your change management needs and create an adoption strategy that works for your organization.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button className="w-full sm:w-auto px-8 py-4 text-base">
+            <Button to="/#contact" className="w-full sm:w-auto px-8 py-4 text-base">
               Schedule Consultation
             </Button>
             <a

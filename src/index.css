@@ -6,7 +6,7 @@
   --ink: #0f0e1a;
   --hairline: #e2e1ec;
   --muted: #6b6780;
-  --accent: #7b2fbe;
+  --accent: #8317e1;
   --accent-2: #e91e8c;
   --accent-3: #2979ff;
   --accent-gold: #ffb900;
@@ -16,7 +16,8 @@
   --grad-mid3: #ff6d3b;
   --grad-end: #ffb900;
   --brand-grad: linear-gradient(90deg, var(--grad-start), var(--grad-mid1), var(--grad-mid2), var(--grad-mid3), var(--grad-end));
-  --font-display: "Georgia", "Times New Roman", serif;
+  /* Use Outfit as display font (loaded via Google Fonts in index.html) */
+  --font-display: "Outfit", "Georgia", serif;
   --font-body: "Inter", "Segoe UI", system-ui, sans-serif;
   /* Microsoft Fluent light mesh design background */
   --page-bg: radial-gradient(circle at 90% 0%, rgba(66,133,244,0.1) 0%, transparent 45%),
@@ -24,6 +25,11 @@
              radial-gradient(circle at 85% 65%, rgba(233,30,140,0.05) 0%, transparent 35%),
              radial-gradient(circle at 30% 90%, rgba(20,184,166,0.05) 0%, transparent 40%),
              var(--bg);
+  /* Hover shadow tokens */
+  --shadow-card-hover: 0 20px 40px -8px rgba(123,47,190,0.18), 0 8px 16px -4px rgba(0,0,0,0.08);
+  --shadow-card-hover-dark: 0 20px 40px -8px rgba(41,121,255,0.25), 0 8px 16px -4px rgba(0,0,0,0.3);
+  --shadow-btn-hover: 0 8px 24px rgba(123,47,190,0.35);
+  --shadow-btn-hover-2: 0 8px 24px rgba(233,30,140,0.35);
 }
 
 :root[data-theme='dark'] {
@@ -41,12 +47,13 @@
   --grad-mid2: #e91e8c;
   --grad-mid3: #ff6d3b;
   --grad-end: #ffb900;
-  /* High contrast mesh design background using vibrant colors from the logo */
   --page-bg: radial-gradient(circle at 80% 10%, rgba(41, 121, 255, 0.22) 0%, transparent 55%),
              radial-gradient(circle at 15% 30%, rgba(233, 30, 140, 0.18) 0%, transparent 50%),
              radial-gradient(circle at 75% 65%, rgba(255, 109, 59, 0.14) 0%, transparent 45%),
              radial-gradient(circle at 20% 85%, rgba(41, 121, 255, 0.18) 0%, transparent 50%),
              var(--bg);
+  --shadow-card-hover: 0 20px 40px -8px rgba(41,121,255,0.3), 0 8px 16px -4px rgba(0,0,0,0.4);
+  --shadow-btn-hover: 0 8px 24px rgba(41,121,255,0.5);
 }
 
 @theme {
@@ -111,9 +118,246 @@ section[id] {
   scroll-margin-top: 72px;
 }
 
+/* ── Primary Button (Liquid Glassmorphism) ───────────────────────────── */
 .btn-primary {
+  position: relative;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  border-radius: 9999px;
+  overflow: hidden;
+  
+  /* The Glass Body */
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  
+  /* Clear Glass Border & 3D Lighting */
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  
+  /* White text with subtle letter-spacing for premium feel */
+  color: #ffffff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  
+  /* Multi-layered shadows: Outset soft shadow and 3D Inset highlights/depth */
+  box-shadow: 
+    /* Outset drop shadow */
+    0 10px 30px -5px rgba(123, 47, 190, 0.3),
+    0 4px 12px -2px rgba(0, 0, 0, 0.15),
+    /* Inset 3D top-left light highlights */
+    inset 0 4px 12px rgba(255, 255, 255, 0.5),
+    inset 0 1px 2px rgba(255, 255, 255, 0.6),
+    /* Inset 3D bottom-right dark shadows for depth */
+    inset 0 -4px 12px rgba(0, 0, 0, 0.15),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.2);
+
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* Glass Reflection Highlight overlay */
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 10%;
+  right: 10%;
+  height: 35%;
+  border-radius: 9999px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 100%);
+  pointer-events: none;
+  transition: all 0.4s ease;
+}
+
+/* Floating colored liquid blob inside for "liquid" feel */
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, 
+    rgba(100, 20, 170, 0.98) 0%, 
+    rgba(215, 10, 120, 0.98) 50%,
+    rgba(20, 90, 230, 0.95) 100%
+  );
+  filter: blur(8px);
+  opacity: 1;
+  z-index: -1;
+  transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transform: scale(0.95);
+}
+
+/* Dark mode adjustment */
+html[data-theme='dark'] .btn-primary {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 
+    0 10px 30px -5px rgba(41, 121, 255, 0.45),
+    0 4px 12px -2px rgba(0, 0, 0, 0.3),
+    inset 0 4px 12px rgba(255, 255, 255, 0.35),
+    inset 0 1px 2px rgba(255, 255, 255, 0.45),
+    inset 0 -4px 12px rgba(0, 0, 0, 0.25),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.3);
+}
+
+html[data-theme='dark'] .btn-primary::after {
+  background: linear-gradient(135deg, 
+    rgba(123, 47, 190, 0.35) 0%, 
+    rgba(233, 30, 140, 0.35) 50%,
+    rgba(41, 121, 255, 0.35) 100%
+  );
+  opacity: 0.85;
+}
+
+/* Hover effect: expansion, shine brightness, liquid color shift */
+.btn-primary:hover {
+  transform: translateY(-2px) scale(1.03);
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 
+    0 14px 35px -5px rgba(123, 47, 190, 0.4),
+    0 6px 16px -2px rgba(0, 0, 0, 0.2),
+    inset 0 6px 14px rgba(255, 255, 255, 0.6),
+    inset 0 1px 3px rgba(255, 255, 255, 0.7),
+    inset 0 -6px 14px rgba(0, 0, 0, 0.1),
+    inset 0 -1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.btn-primary:hover::before {
+  height: 40%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 100%);
+}
+
+.btn-primary:hover::after {
+  transform: scale(1.05);
+  filter: blur(6px);
+  opacity: 1;
+  background: linear-gradient(135deg, 
+    rgba(100, 20, 170, 1) 0%, 
+    rgba(215, 10, 120, 1) 50%,
+    rgba(20, 90, 230, 1) 100%
+  );
+}
+
+html[data-theme='dark'] .btn-primary:hover::after {
+  background: linear-gradient(135deg, 
+    rgba(123, 47, 190, 0.45) 0%, 
+    rgba(233, 30, 140, 0.45) 50%,
+    rgba(41, 121, 255, 0.45) 100%
+  );
+}
+
+/* Clicking State */
+.btn-primary:active {
+  transform: translateY(1px) scale(0.97);
+  box-shadow: 
+    0 4px 15px -3px rgba(123, 47, 190, 0.25),
+    0 2px 6px -1px rgba(0, 0, 0, 0.15),
+    inset 0 3px 6px rgba(255, 255, 255, 0.4),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.2);
+  transition: all 0.08s ease;
+}
+
+
+/* ── Card Hover System ───────────────────────────────────────────────── */
+/* Generic interactive card — add class "card-hover" for consistent effects */
+.card-hover {
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.25s ease,
+              border-color 0.25s ease;
+}
+.card-hover:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-card-hover);
+  border-color: color-mix(in srgb, var(--accent) 30%, transparent) !important;
+}
+.card-hover:active {
+  transform: translateY(-2px);
+}
+
+/* ── Icon bounce hover ────────────────────────────────────────────────── */
+.icon-hover {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.25s ease;
+}
+.icon-hover:hover,
+.group:hover .icon-hover {
+  transform: scale(1.15) rotate(-5deg);
+  background-color: color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+/* ── Link underline slide-in ─────────────────────────────────────────── */
+.link-underline {
+  position: relative;
+  display: inline-block;
+}
+.link-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 0;
+  height: 1.5px;
+  background: var(--accent);
+  transition: width 0.3s ease;
+}
+.link-underline:hover::after {
+  width: 100%;
+}
+
+/* ── Glow hover for CTA buttons ──────────────────────────────────────── */
+.btn-glow {
+  position: relative;
+  transition: transform 0.2s ease, box-shadow 0.25s ease;
+}
+.btn-glow::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
   background: var(--brand-grad);
-  color: #fff;
+  filter: blur(10px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+.btn-glow:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(123,47,190,0.3);
+}
+.btn-glow:hover::after {
+  opacity: 0.6;
+}
+
+/* ── Nav link hover ──────────────────────────────────────────────────── */
+.nav-link {
+  position: relative;
+  transition: color 0.2s ease;
+}
+.nav-link::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.nav-link:hover::before {
+  opacity: 1;
+}
+
+/* ── Animate fade-up ─────────────────────────────────────────────────── */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.55s ease both;
+}
+
+.motion-safe\:animate-fade-up {
+  animation: fade-up 0.55s ease both;
 }
 
 /* ── Hero orb float animations ──────────────────────────────────────── */
@@ -139,14 +383,35 @@ section[id] {
   100% { transform: translate(0,    0)    scale(1);    }
 }
 
-/* ── Vite / project animations (kept) ──────────────────────────────── */
-@keyframes fade-up {
-  from { opacity: 0; transform: translateY(18px); }
-  to   { opacity: 1; transform: translateY(0); }
+/* ── Floating Glassmorphic Animations ── */
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-25px) rotate(15deg); }
 }
 
-.motion-safe\:animate-fade-up {
-  animation: fade-up 0.55s ease both;
+@keyframes float-reverse {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(20px) rotate(-15deg); }
+}
+
+.animate-float-slow {
+  animation: float-slow 18s ease-in-out infinite;
+}
+
+.animate-float-reverse {
+  animation: float-reverse 22s ease-in-out infinite;
+}
+
+/* ── Pulse dot ───────────────────────────────────────────────────────── */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.85); }
+}
+
+/* ── Shimmer effect for loading/skeleton ─────────────────────────────── */
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to   { background-position: 200% 0; }
 }
 
 /* ── Global Scrollbar Styles (Adaptive Theme Support) ── */
@@ -191,21 +456,158 @@ body, header, footer, section, div, span, p, a, button, input, select, textarea 
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ── Floating Glassmorphic Animations ── */
-@keyframes float-slow {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-25px) rotate(15deg); }
+/* ── Focus ring for accessibility ────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 
-@keyframes float-reverse {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(20px) rotate(-15deg); }
+/* ── Glassmorphic Navigation Wrapper ─────────────────────────────────── */
+.glass-nav-wrapper {
+  position: relative;
+  padding: 0.25rem;
+  
+  /* Colored Translucent Glass Background */
+  background: linear-gradient(135deg, 
+    rgba(123, 47, 190, 0.06) 0%, 
+    rgba(41, 120, 255, 0.04) 50%,
+    rgba(233, 30, 142, 0.05) 100%
+  );
+  
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border-radius: 9999px;
+  
+  /* Colored glass border */
+  border: 1.5px solid rgba(123, 47, 190, 0.18);
+  
+  box-shadow: 
+    0 15px 35px -5px rgba(123, 47, 190, 0.08),
+    0 5px 15px -3px rgba(0, 0, 0, 0.03),
+    inset 0 1px 2px rgba(255, 255, 255, 0.25),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.02);
 }
 
-.animate-float-slow {
-  animation: float-slow 18s ease-in-out infinite;
+html[data-theme='dark'] .glass-nav-wrapper {
+  background: linear-gradient(135deg, 
+    rgba(41, 121, 255, 0.08) 0%, 
+    rgba(123, 47, 190, 0.06) 50%,
+    rgba(233, 30, 140, 0.08) 100%
+  );
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 
+    0 15px 35px -5px rgba(0, 0, 0, 0.3),
+    inset 0 1px 1px rgba(255, 255, 255, 0.1);
+}
+/* Sharp gloss highlight overlay on container (outside gooey blur) */
+.glass-nav-wrapper::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  /* Top-down 3D specular glare */
+  background: linear-gradient(180deg, 
+    rgba(255, 255, 255, 0.22) 0%, 
+    rgba(255, 255, 255, 0.05) 35%, 
+    rgba(0, 0, 0, 0) 60%, 
+    rgba(0, 0, 0, 0.04) 100%
+  );
+  pointer-events: none;
+  z-index: 2;
+  box-shadow: 
+    inset 0 2px 4px rgba(255, 255, 255, 0.45),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.12);
 }
 
-.animate-float-reverse {
-  animation: float-reverse 22s ease-in-out infinite;
+/* Container for gooey water droplets */
+.nav-goo-container {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+  filter: url(#nav-goo-filter);
+  -webkit-filter: url(#nav-goo-filter);
 }
+
+/* Individual liquid drop */
+.nav-goo-drop {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  border-radius: 9999px;
+  
+  /* Brand liquid gradient matching the company logo colors (purple, pink, blue) */
+  background: linear-gradient(135deg, 
+    var(--accent) 0%, 
+    var(--accent-2) 50%, 
+    var(--accent-3) 100%
+  );
+  
+  /* 3D internal drop refraction shadow */
+  box-shadow: 
+    0 4px 12px rgba(123, 47, 190, 0.25),
+    inset 0 3px 6px rgba(255, 255, 255, 0.45),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.15);
+    
+  transition: transform 0.45s cubic-bezier(0.25, 0.8, 0.25, 1),
+              width 0.45s cubic-bezier(0.25, 0.8, 0.25, 1),
+              opacity 0.4s ease;
+  will-change: transform, width, opacity;
+}
+
+html[data-theme='dark'] .nav-goo-drop {
+  /* Brand liquid gradient for dark theme */
+  background: linear-gradient(135deg, 
+    var(--accent) 0%, 
+    var(--accent-2) 50%, 
+    var(--accent-3) 100%
+  );
+  box-shadow: 
+    0 4px 12px rgba(41, 121, 255, 0.35),
+    inset 0 3px 6px rgba(255, 255, 255, 0.35),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* ── Liquid Glassmorphism Navigation Buttons ─────────────────────────── */
+.liquid-glass-nav {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.375rem 1.1rem 0.375rem 1.5rem; /* Increased padding on the left side */
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--muted);
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  background: transparent;
+  transition: color 0.3s ease, transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  overflow: visible;
+  cursor: pointer;
+  user-select: none;
+  z-index: 1; /* Rendered above the sliding indicator */
+}
+
+.liquid-glass-nav:hover {
+  color: var(--ink);
+  transform: translateY(-1px);
+}
+
+.liquid-glass-nav.active {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+html[data-theme='dark'] .liquid-glass-nav:hover {
+  color: #ffffff;
+}
+html[data-theme='dark'] .liquid-glass-nav.active {
+  color: #ffffff;
+}
+
+
+

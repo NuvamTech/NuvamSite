@@ -1,7 +1,9 @@
+import { useNavigate } from 'react-router-dom';
 import { siteCopy } from '../../content/siteCopy';
 
 export function Footer() {
   const year = new Date().getFullYear();
+  const navigate = useNavigate();
 
   const scrollTo = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault();
@@ -25,8 +27,7 @@ export function Footer() {
           {/* Logo & Pitch */}
           <div className="space-y-4">
             <a href="#home" onClick={(e) => scrollTo(e, 'home')} className="inline-flex items-center gap-2">
-              <img src="/logo.png" alt="NUVAM" className="h-10 w-10 object-contain" />
-              <span className="font-display text-lg font-bold brand-grad-text">NUVAM</span>
+              <img src="/logo.png" alt="NUVAM" className="h-[48px] w-auto object-contain transition-transform duration-300 hover:scale-[1.05]"/>
             </a>
             <p className="text-sm leading-6 text-muted">
               Premium digital transformation, AI analytics, and Microsoft cloud software engineering.
@@ -44,13 +45,12 @@ export function Footer() {
             <ul className="space-y-2.5 text-sm">
               {siteCopy.serviceCategories.map((cat) => (
                 <li key={cat.category}>
-                  <a
-                    href="#services"
-                    onClick={(e) => scrollTo(e, 'services')}
-                    className="text-muted hover:text-ink transition-colors"
+                  <button
+                    onClick={() => navigate('/services')}
+                    className="text-muted hover:text-ink transition-colors text-left"
                   >
                     {cat.category}
-                  </a>
+                  </button>
                 </li>
               ))}
             </ul>
@@ -60,26 +60,14 @@ export function Footer() {
           <div>
             <p className="mb-4 text-xs font-semibold tracking-wider text-[var(--accent)] uppercase">Products</p>
             <ul className="space-y-2.5 text-sm">
-              {siteCopy.products.isv.slice(0, 3).map((prod) => (
+              {siteCopy.products.isv.map((prod) => (
                 <li key={prod.id}>
-                  <a
-                    href="#products"
-                    onClick={(e) => scrollTo(e, 'products')}
-                    className="text-muted hover:text-ink transition-colors"
+                  <button
+                    onClick={() => navigate(`/products/${prod.id}`)}
+                    className="text-muted hover:text-ink transition-colors text-left"
                   >
                     {prod.title.split(' ')[0]} {prod.title.includes('(') ? prod.title.substring(prod.title.indexOf('(')) : ''}
-                  </a>
-                </li>
-              ))}
-              {siteCopy.products.industry.slice(0, 2).map((prod) => (
-                <li key={prod.id}>
-                  <a
-                    href="#products"
-                    onClick={(e) => scrollTo(e, 'products')}
-                    className="text-muted hover:text-ink transition-colors"
-                  >
-                    {prod.title}
-                  </a>
+                  </button>
                 </li>
               ))}
             </ul>

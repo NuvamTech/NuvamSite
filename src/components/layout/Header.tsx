@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { siteCopy } from '../../content/siteCopy';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export function Header() {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
@@ -9,7 +9,14 @@ export function Header() {
   const [hoveredMenu, setHoveredMenu] = useState<string | null>(null);
   const [expandedMobileItem, setExpandedMobileItem] = useState<string | null>(null);
   const drawerRef = useRef<HTMLDivElement>(null);
+  const navRef = useRef<HTMLElement>(null);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const [activeEl, setActiveEl] = useState<HTMLElement | null>(null);
+  const [hoveredEl, setHoveredEl] = useState<HTMLElement | null>(null);
+  const [activeStyle, setActiveStyle] = useState({ left: 0, width: 0 });
+  const [hoverStyle, setHoverStyle] = useState({ left: 0, width: 0, opacity: 0 });
 
   /* Scroll to top on mount */
   useEffect(() => {
@@ -38,22 +45,88 @@ export function Header() {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  /* Active-section tracking via IntersectionObserver */
+  /* Update active nav based on path and scroll spy on homepage */
   useEffect(() => {
-    const observers: IntersectionObserver[] = [];
-    const sections = ['home', 'services', 'products', 'about', 'contact'];
-    sections.forEach((id) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      const obs = new IntersectionObserver(
-        ([entry]) => { if (entry.isIntersecting) setActive(id); },
-        { rootMargin: '-10% 0px -70% 0px', threshold: 0 },
-      );
-      obs.observe(el);
-      observers.push(obs);
-    });
-    return () => observers.forEach((o) => o.disconnect());
-  }, []);
+    const path = location.pathname;
+    
+    if (path.startsWith('/products')) {
+      setActive('products');
+      return;
+    }
+    if (path.startsWith('/services')) {
+      setActive('services');
+      return;
+    }
+    if (path.startsWith('/resources')) {
+      setActive('resources');
+      return;
+    }
+    
+    if (path === '/') {
+      const handleScroll = () => {
+        const sections = ['home', 'about', 'services', 'products', 'contact'];
+        const scrollPos = window.scrollY + 120; // Offset for header trigger point
+        
+        let currentSection = 'home';
+        for (const id of sections) {
+          const el = document.getElementById(id);
+          if (el) {
+            const top = el.offsetTop;
+            const height = el.offsetHeight;
+            if (scrollPos >= top && scrollPos < top + height) {
+              currentSection = id;
+            }
+          }
+        }
+        setActive(currentSection);
+      };
+
+      window.addEventListener('scroll', handleScroll);
+      handleScroll(); // Run immediately
+      return () => window.removeEventListener('scroll', handleScroll);
+    }
+  }, [location.pathname, location.hash]);
+
+  /* Track the current active element position */
+  useEffect(() => {
+    if (!navRef.current) return;
+    const activeAnchor = navRef.current.querySelector('.liquid-glass-nav.active') as HTMLElement;
+    if (activeAnchor) {
+      const parentRect = navRef.current.getBoundingClientRect();
+      const targetRect = activeAnchor.getBoundingClientRect();
+      setActiveStyle({
+        left: targetRect.left - parentRect.left,
+        width: targetRect.width,
+      });
+    }
+  }, [active, location.pathname, activeEl]);
+
+  /* Track the hovered element position, defaulting to snap back/fade to active position */
+  useEffect(() => {
+    if (hoveredEl && navRef.current) {
+      const parentRect = navRef.current.getBoundingClientRect();
+      const targetRect = hoveredEl.getBoundingClientRect();
+      setHoverStyle({
+        left: targetRect.left - parentRect.left,
+        width: targetRect.width,
+        opacity: 1,
+      });
+    } else {
+      // Smoothly snap back to active position as it fades out to simulate gooey merging
+      setHoverStyle((prev) => ({
+        left: activeStyle.left,
+        width: activeStyle.width,
+        opacity: 0,
+      }));
+    }
+  }, [hoveredEl, activeStyle]);
+
+  // Keep activeEl updated when active state changes
+  useEffect(() => {
+    if (!navRef.current) return;
+    const activeAnchor = navRef.current.querySelector('.liquid-glass-nav.active') as HTMLElement;
+    setActiveEl(activeAnchor);
+  }, [active, location.pathname]);
 
   /* Theme toggle */
   const toggleTheme = () => {
@@ -136,15 +209,37 @@ export function Header() {
           {/* Desktop nav and actions aligned to the right */}
           <div className="flex items-center gap-6">
             {/* Desktop nav */}
-            <nav className="hidden gap-2 lg:flex items-center" aria-label="Main navigation">
+            <nav 
+              ref={navRef}
+              className="hidden lg:flex items-center gap-1 glass-nav-wrapper" 
+              aria-label="Main navigation"
+            >
+              {/* Gooey liquid active and hover droplets */}
+              <div className="nav-goo-container">
+                {/* Active drop */}
+                <div 
+                  className="nav-goo-drop active-drop"
+                  style={{
+                    transform: `translateX(${activeStyle.left}px)`,
+                    width: `${activeStyle.width}px`,
+                  }}
+                />
+                {/* Hover drop */}
+                <div 
+                  className="nav-goo-drop hover-drop"
+                  style={{
+                    transform: `translateX(${hoverStyle.left}px)`,
+                    width: `${hoverStyle.width}px`,
+                    opacity: hoverStyle.opacity,
+                  }}
+                />
+              </div>
               <a
                 href="#home"
                 onClick={(e) => handleNavClick(e, 'home')}
-                className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-all duration-200 ${
-                  active === 'home' 
-                    ? 'bg-surface/50 border border-hairline/60 shadow-xs text-[var(--accent)] font-semibold' 
-                    : 'border border-transparent text-muted hover:text-ink hover:bg-surface/30'
-                }`}
+                onMouseEnter={(e) => setHoveredEl(e.currentTarget)}
+                onMouseLeave={() => setHoveredEl(null)}
+                className={`liquid-glass-nav ${active === 'home' ? 'active' : ''}`}
               >
                 Home
               </a>
@@ -152,29 +247,25 @@ export function Header() {
               <a
                 href="#about"
                 onClick={(e) => handleNavClick(e, 'about')}
-                className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-all duration-200 ${
-                  active === 'about' 
-                    ? 'bg-surface/50 border border-hairline/60 shadow-xs text-[var(--accent)] font-semibold' 
-                    : 'border border-transparent text-muted hover:text-ink hover:bg-surface/30'
-                }`}
+                onMouseEnter={(e) => setHoveredEl(e.currentTarget)}
+                onMouseLeave={() => setHoveredEl(null)}
+                className={`liquid-glass-nav ${active === 'about' ? 'active' : ''}`}
               >
                 About
               </a>
 
               {/* Services with Mega Menu Dropdown */}
               <div 
-                className="relative"
+                className="relative flex items-center justify-center"
                 onMouseEnter={() => setHoveredMenu('services')}
                 onMouseLeave={() => setHoveredMenu(null)}
               >
                 <a
                   href="#services"
                   onClick={(e) => handleNavClick(e, 'services')}
-                  className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
-                    active === 'services' 
-                      ? 'bg-surface/50 border border-hairline/60 shadow-xs text-[var(--accent)] font-semibold' 
-                      : 'border border-transparent text-muted hover:text-ink hover:bg-surface/30'
-                  }`}
+                  onMouseEnter={(e) => setHoveredEl(e.currentTarget)}
+                  onMouseLeave={() => setHoveredEl(null)}
+                  className={`liquid-glass-nav gap-1 ${active === 'services' ? 'active' : ''}`}
                 >
                   Services
                   <svg className={`h-3 w-3 transition-transform duration-300 ${hoveredMenu === 'services' ? 'rotate-180 text-[var(--accent)]' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
@@ -215,18 +306,16 @@ export function Header() {
 
               {/* Products with Mega Dropdown */}
               <div 
-                className="relative"
+                className="relative flex items-center justify-center"
                 onMouseEnter={() => setHoveredMenu('products')}
                 onMouseLeave={() => setHoveredMenu(null)}
               >
                 <a
                   href="/products"
                   onClick={(e) => { e.preventDefault(); handleProductClick(); }}
-                  className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
-                    active === 'products' 
-                      ? 'bg-surface/50 border border-hairline/60 shadow-xs text-[var(--accent)] font-semibold' 
-                      : 'border border-transparent text-muted hover:text-ink hover:bg-surface/30'
-                  }`}
+                  onMouseEnter={(e) => setHoveredEl(e.currentTarget)}
+                  onMouseLeave={() => setHoveredEl(null)}
+                  className={`liquid-glass-nav gap-1 ${active === 'products' ? 'active' : ''}`}
                 >
                   Products
                   <svg className={`h-3 w-3 transition-transform duration-300 ${hoveredMenu === 'products' ? 'rotate-180 text-[var(--accent)]' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
@@ -235,10 +324,10 @@ export function Header() {
                 </a>
 
                 {hoveredMenu === 'products' && (
-                  <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 w-[480px]">
-                    <div className="bg-surface border border-hairline/80 rounded-2xl p-5 shadow-xl grid grid-cols-2 gap-4 animate-fade-up">
+                  <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 w-[240px]">
+                    <div className="bg-surface border border-hairline/80 rounded-2xl p-5 shadow-xl animate-fade-up">
                       <div className="space-y-3">
-                        <p className="text-xs font-semibold tracking-wider text-[var(--accent)] uppercase">Products ISV</p>
+                        <p className="text-xs font-semibold tracking-wider text-[var(--accent)] uppercase">Products</p>
                         <ul className="space-y-2">
                           {siteCopy.products.isv.map((item) => (
                             <li key={item.id}>
@@ -253,22 +342,6 @@ export function Header() {
                           ))}
                         </ul>
                       </div>
-                      <div className="space-y-3">
-                        <p className="text-xs font-semibold tracking-wider text-[var(--accent)] uppercase">By Function/Industry</p>
-                        <ul className="space-y-2">
-                          {siteCopy.products.industry.map((item) => (
-                            <li key={item.id}>
-                              <a
-                                href="#"
-                                onClick={(e) => { e.preventDefault(); handleProductClick(item.id); }}
-                                className="block text-xs font-medium text-ink hover:text-[var(--accent)] transition-colors"
-                              >
-                                {item.title}
-                              </a>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
                     </div>
                   </div>
                 )}
@@ -276,21 +349,19 @@ export function Header() {
 
               {/* Resources Submenu */}
               <div 
-                className="relative"
+                className="relative flex items-center justify-center mr-1.5"
                 onMouseEnter={() => setHoveredMenu('resources')}
                 onMouseLeave={() => setHoveredMenu(null)}
               >
                 <a
                   href="/resources"
                   onClick={(e) => { e.preventDefault(); handleResourceClick(); }}
-                  className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
-                    active === 'resources' 
-                      ? 'bg-surface/50 border border-hairline/60 shadow-xs text-[var(--accent)] font-semibold' 
-                      : 'border border-transparent text-muted hover:text-ink hover:bg-surface/30'
-                  }`}
+                  onMouseEnter={(e) => setHoveredEl(e.currentTarget)}
+                  onMouseLeave={() => setHoveredEl(null)}
+                  className={`liquid-glass-nav pr-3.5 gap-1 ${active === 'resources' ? 'active' : ''}`}
                 >
                   Resources
-                  <svg className={`h-3 w-3 transition-transform duration-300 ${hoveredMenu === 'resources' ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                  <svg className={`h-3 w-3 transition-transform duration-300 ${hoveredMenu === 'resources' ? 'rotate-180 text-[var(--accent)]' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                   </svg>
                 </a>
@@ -334,7 +405,7 @@ export function Header() {
               <a
                 href="#contact"
                 onClick={(e) => handleNavClick(e, 'contact')}
-                className="hidden sm:inline-flex items-center justify-center rounded-full brand-grad text-white font-semibold text-xs px-5 py-2.5 hover:opacity-90 transition-all shadow-md hover:scale-[1.03]"
+                className="hidden sm:inline-flex items-center justify-center btn-primary text-xs px-5 py-2.5"
               >
                 Contact Us
               </a>
@@ -397,7 +468,11 @@ export function Header() {
         <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)]" />
 
         <div className="flex items-center justify-between px-5 py-4 border-b border-hairline/50">
-          <span className="font-display text-lg font-bold brand-grad-text">NUVAM</span>
+          <img
+            src="/logo.png"
+            alt="NUVAM logo"
+            className="h-8 w-auto object-contain"
+          />
           <button
             type="button"
             onClick={() => setMenuOpen(false)}
@@ -483,19 +558,7 @@ export function Header() {
                 >
                   View All Products →
                 </a>
-                <p className="text-[10px] font-semibold text-[var(--accent)] uppercase px-2 mt-2">Products ISV</p>
                 {siteCopy.products.isv.map((item) => (
-                  <a
-                    key={item.id}
-                    href="#"
-                    onClick={(e) => { e.preventDefault(); handleProductClick(item.id); }}
-                    className="block px-2 py-1 text-xs text-muted hover:text-ink"
-                  >
-                    {item.title}
-                  </a>
-                ))}
-                <p className="text-[10px] font-semibold text-[var(--accent)] uppercase px-2 mt-2">Functions</p>
-                {siteCopy.products.industry.map((item) => (
                   <a
                     key={item.id}
                     href="#"
@@ -554,7 +617,28 @@ export function Header() {
             )}
           </div>
         </nav>
+        
+        {/* Contact Us Button inside Hamburger drawer */}
+        <div className="p-5 border-t border-hairline/50 bg-surface/50 backdrop-blur-md shrink-0">
+          <a
+            href="#contact"
+            onClick={(e) => handleNavClick(e, 'contact')}
+            className="flex w-full items-center justify-center btn-primary text-xs py-3 font-semibold text-center"
+          >
+            Contact Us
+          </a>
+        </div>
       </div>
+      {/* Hidden SVG Gooey Filter definition */}
+      <svg style={{ position: 'absolute', width: 0, height: 0, pointerEvents: 'none' }} aria-hidden="true">
+        <defs>
+          <filter id="nav-goo-filter">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
+            <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -8" result="goo" />
+            <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+          </filter>
+        </defs>
+      </svg>
     </>
   );
 }

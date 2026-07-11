@@ -38,19 +38,22 @@ export function TechStackMarquee() {
     return (
       <div 
         key={`${copyId}-${index}`} 
-        className="flex items-center gap-3 select-none"
+        className="flex items-center gap-3 select-none group cursor-default"
       >
         <div 
-          className="h-12 w-12 flex items-center justify-center rounded-xl p-2 bg-surface border border-hairline/40 shadow-xs"
+          className="h-12 w-12 flex items-center justify-center rounded-xl p-2 bg-surface border border-hairline/40 shadow-xs
+                     transition-all duration-300 ease-out
+                     group-hover:scale-110 group-hover:shadow-md group-hover:border-[var(--accent)]/40
+                     group-hover:-translate-y-1"
         >
           <img 
             src={`https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/${tech.path}`} 
             alt={`${tech.name} logo`}
-            className={`w-8 h-8 object-contain ${tech.darkInvert ? 'dark:brightness-200 dark:contrast-200 dark:invert' : ''}`}
+            className={`w-8 h-8 object-contain transition-transform duration-300 ${tech.darkInvert ? 'dark:brightness-200 dark:contrast-200 dark:invert' : ''}`}
             loading="lazy"
           />
         </div>
-        <span className="text-sm font-semibold tracking-wide text-ink/70">
+        <span className="text-sm font-semibold tracking-wide text-ink/70 group-hover:text-[var(--accent)] transition-colors duration-200">
           {tech.name}
         </span>
       </div>
@@ -58,14 +61,14 @@ export function TechStackMarquee() {
   };
 
   return (
-    <section className="w-full border-y border-hairline/50 bg-surface/30 py-8 my-4 backdrop-blur-xs">
+    <section className="w-full border-y border-hairline/50 bg-surface/30 py-8 my-4 backdrop-blur-xs" aria-label="Technology stack">
       <div className="relative w-full overflow-hidden">
         {/* Gradient fade on left & right */}
         <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-24 z-10 bg-gradient-to-r from-bg to-transparent" />
         <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-24 z-10 bg-gradient-to-l from-bg to-transparent" />
         
-        {/* Track containing 2 copies for seamless loop */}
-        <div className="flex w-max animate-marquee">
+        {/* Track containing 2 copies for seamless loop — pauses on hover */}
+        <div className="flex w-max animate-marquee hover:[animation-play-state:paused]">
           {/* First copy */}
           <div className="flex items-center gap-16 px-8">
             {TECH_STACK.map((tech, i) => renderItem(tech, i, 'first'))}
@@ -88,6 +91,10 @@ export function TechStackMarquee() {
           display: flex;
           width: max-content;
           animation: marquee 50s linear infinite;
+        }
+
+        .animate-marquee:hover {
+          animation-play-state: paused;
         }
       `}</style>
     </section>

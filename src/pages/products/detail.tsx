@@ -1,3 +1,4 @@
+import { SEO } from '../../components/SEO';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '../../components/ui/Button';
 
@@ -13,10 +14,10 @@ interface ProductData {
 
 const PRODUCTS_CONTENT: Record<string, ProductData> = {
   nes: {
-    title: 'NES (Novum Entrance System)',
+    title: 'NES (Nuvam Entrance System)',
     category: 'ISV Product',
     subtitle: 'Modern cloud-based visitor management system for enterprise offices and business centers.',
-    description: 'Novum Entrance System (NES) streamlines the check-in process for guests, contractors, and employees. Offering features like pre-registration, automated host alerts, custom badge printing, and instant emergency roll calls, NES ensures your facilities remain secure and welcoming.',
+    description: 'Nuvam Entrance System (NES) streamlines the check-in process for guests, contractors, and employees. Offering features like pre-registration, automated host alerts, custom badge printing, and instant emergency roll calls, NES ensures your facilities remain secure and welcoming.',
     features: [
       'Digital guest pre-registration via email invitations',
       'Instant SMS/Email host notifications upon guest arrival',
@@ -111,81 +112,6 @@ const PRODUCTS_CONTENT: Record<string, ProductData> = {
       { title: 'Smart Retail', desc: 'Monitor demographic trends, visitor dwell time, and VIP customer arrivals securely.' },
       { title: 'Event Management', desc: 'Speed up ticket verification and credentials scanning for large scale conference halls.' }
     ]
-  },
-  'bidding-platform': {
-    title: 'Commodity Bidding Platform',
-    category: 'Industry Platform',
-    subtitle: 'Secure SaaS platform for digital commodity trading, custom listings, and auction flows.',
-    description: 'Transition commodity sales and purchasing onto a transparent, fully automated auction portal. From listing raw products to managing multi-stage bid approvals, automated notifications, and final contract execution, the platform increases velocity and reduces commercial risk.',
-    features: [
-      'Live bidding engine with real-time price updates',
-      'Secure buyer pre-qualification and deposits tracking',
-      'Automated bid closing, extensions, and reserve pricing',
-      'Custom workflows for internal commercial approval',
-      'Audit logging of every action to prevent bidding fraud',
-      'Interactive supplier performance dashboards'
-    ],
-    specs: [
-      { label: 'Real-time Engine', value: 'SignalR / WebSockets for live bidding' },
-      { label: 'Cloud Host', value: 'Microsoft Azure (Web Apps + Cosmos DB)' },
-      { label: 'Payments', value: 'Stripe, Bank Transfer API Integration' },
-      { label: 'Languages', value: 'English, Azerbaijani, Russian support' }
-    ],
-    useCases: [
-      { title: 'Agricultural Trade', desc: 'Auction grains, livestock, and fertilizers directly to qualified distributors.' },
-      { title: 'Industrial Metals', desc: 'Host high-volume bids for scrap metals, steel products, and chemicals.' },
-      { title: 'Government Procurement', desc: 'Implement transparent, public-facing tender auctions for state assets.' }
-    ]
-  },
-  'd365-automations': {
-    title: 'D365 Workflow Automations',
-    category: 'Industry Platform',
-    subtitle: 'Maximize efficiency in Microsoft Dynamics 365 by automating routine enterprise actions.',
-    description: 'Break free from manual, error-prone data entry and repetitive workflows. Our specialized D365 automation modules seamlessly connect ERP subsystems to automate invoice indexing, tax matching, payroll calculations, and vendor status updates.',
-    features: [
-      'No-code/Low-code Power Automate cloud flow integration',
-      'RPA tools for legacy on-premises applications integration',
-      'AI-powered document parser for vendor invoice entry',
-      'Automated monthly financial closure workflows',
-      'Instant mobile notifications for multi-level manager approvals',
-      'Cross-system inventory and stock balancing'
-    ],
-    specs: [
-      { label: 'Core Platform', value: 'Microsoft Power Platform, Azure Logic Apps' },
-      { label: 'Target ERP', value: 'Dynamics 365 Finance & Supply Chain' },
-      { label: 'AI Builder', value: 'GPT-4 Invoice Extraction models' },
-      { label: 'Monitoring', value: 'Power BI Execution and Health Logs' }
-    ],
-    useCases: [
-      { title: 'Accounts Payable', desc: 'Automatically extract invoice data from emails, match with Purchase Orders, and queue for payment.' },
-      { title: 'Supply Chain', desc: 'Trigger reorder events when stock levels fall below critical thresholds, and auto-email vendors.' },
-      { title: 'Financial Auditing', desc: 'Perform real-time compliance checks across general ledger journals before posting.' }
-    ]
-  },
-  'airport-revenue': {
-    title: 'Airport Revenue Management ISV',
-    category: 'Industry Platform',
-    subtitle: 'Optimize contracts, billing, and retail concession revenue management for airports.',
-    description: 'Specifically engineered for the aviation industry, our Airport Revenue Management system automates aeronautical invoicing, landing fee calculations, retail rental concessions, and passenger charge structures. Eliminate complex spreadsheets and secure your cash flow.',
-    features: [
-      'Automated aeronautical billing based on aircraft weight and park time',
-      'Concession revenue tracking with variable sales-percentage rent',
-      'Real-time passenger statistics integration (departure control systems)',
-      'Contract lifecycle management with CPI escalation tracking',
-      'Interactive financial forecasting and airline route profitability',
-      'Custom ERP connector for direct invoice posting'
-    ],
-    specs: [
-      { label: 'Data Standards', value: 'IATA Message Parser (MVT, LDM, SLS)' },
-      { label: 'Deployment', value: 'Azure Cloud Platform / Hybrid' },
-      { label: 'Database', value: 'Microsoft Azure SQL Database' },
-      { label: 'Security', value: 'SOC 2 Type II, ISO 27001 Certified environment' }
-    ],
-    useCases: [
-      { title: 'Aeronautical Invoicing', desc: 'Calculate exact landing, parking, and security fees directly from flight plans and radar logs.' },
-      { title: 'Concession Invoicing', desc: 'Integrate airport duty-free POS terminals to dynamically calculate concession fees.' },
-      { title: 'Budgeting & Forecasting', desc: 'Run predictive scenarios for parking lots, terminals, and passenger numbers.' }
-    ]
   }
 };
 
@@ -198,6 +124,11 @@ export function ProductDetail() {
   if (!product) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-surface">
+      <SEO
+        title="Nuvam Entrance System (NES) & Enterprise Software"
+        description="Learn about the Nuvam Entrance System (NES), our cloud-based visitor management system for secure and modern check-ins."
+        keywords="visitor management, NES, entrance system, visitor registration, access control"
+      />
         <div className="text-center py-20">
           <h2 className="text-2xl font-bold mb-4 text-ink">Product Not Found</h2>
           <Button onClick={() => navigate('/products')}>Back to Products</Button>
@@ -209,7 +140,7 @@ export function ProductDetail() {
   return (
     <div className="min-h-screen bg-surface">
       {/* Hero Section */}
-      <section className="relative py-20 md:py-28 overflow-hidden">
+      <section className="relative py-12 md:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent)]/5 to-[var(--accent-2)]/5 pointer-events-none" />
         <div className="mx-auto max-w-5xl px-4 sm:px-6 relative z-10">
           <div className="text-center max-w-3xl mx-auto">
@@ -316,7 +247,7 @@ export function ProductDetail() {
             Experience our platforms firsthand. Schedule a 30-minute demonstration with our solutions engineers to explore your requirements.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button className="w-full sm:w-auto px-8 py-4 text-base" onClick={() => navigate('/contact')}>
+            <Button className="w-full sm:w-auto px-8 py-4 text-base" onClick={() => { navigate('/'); setTimeout(() => { const el = document.getElementById('contact'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }, 100); }}>
               Book Live Demo
             </Button>
             <a

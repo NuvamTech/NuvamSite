@@ -1,3 +1,4 @@
+import { SEO } from '../../components/SEO';
 import { useNavigate } from 'react-router-dom';
 import { siteCopy } from '../../content/siteCopy';
 import { Button } from '../../components/ui/Button';
@@ -7,8 +8,13 @@ export function ServicesIndex() {
 
   return (
     <div className="min-h-screen bg-surface">
+      <SEO
+        title="IT & Software Development Services | Nuvam Infotech"
+        description="Explore Nuvam Tech's range of services: Custom software development, cloud infrastructure, Power BI, Dynamics 365 ERP, and AI integrations."
+        keywords="software development company, IT services, custom software, ERP systems, BI reports"
+      />
       {/* Hero Section */}
-      <section className="relative py-20 md:py-28 overflow-hidden">
+      <section className="relative py-12 md:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent)]/5 to-[var(--accent-2)]/5 pointer-events-none" />
         <div className="mx-auto max-w-5xl px-4 sm:px-6 relative z-10">
           <div className="text-center max-w-3xl mx-auto">
@@ -90,7 +96,7 @@ export function ServicesIndex() {
             Whether you need a single service or a comprehensive digital transformation, our team is ready to help you achieve your goals.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button className="w-full sm:w-auto px-8 py-4 text-base" onClick={() => navigate('/contact')}>
+            <Button to="/#contact" className="w-full sm:w-auto px-8 py-4 text-base">
               Get a Consultation
             </Button>
             <a

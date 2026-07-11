@@ -1,9 +1,15 @@
+import { SEO } from '../../components/SEO';
 import { Button } from '../../components/ui/Button';
 
 export function Dynamics365Service() {
   return (
     <div className="min-h-screen bg-surface">
-      <section className="relative py-20 md:py-28 overflow-hidden">
+      <SEO
+        title="Microsoft Dynamics 365 ERP & CRM Implementation | Solutions Partner"
+        description="Deploy and customize Dynamics 365 Finance, Supply Chain, and Sales. Streamline enterprise operations."
+        keywords="Dynamics 365 consultant, ERP implementation partner, CRM customization, Dynamics 365 Finance"
+      />
+      <section className="relative py-12 md:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent)]/5 to-[var(--accent-2)]/5 pointer-events-none" />
         <div className="mx-auto max-w-5xl px-4 sm:px-6 relative z-10">
           <div className="text-center max-w-3xl mx-auto">
@@ -182,7 +188,7 @@ export function Dynamics365Service() {
             Let's schedule a consultation to discuss your Dynamics 365 requirements and implementation strategy.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button className="w-full sm:w-auto px-8 py-4 text-base">
+            <Button to="/#contact" className="w-full sm:w-auto px-8 py-4 text-base">
               Schedule Consultation
             </Button>
             <a

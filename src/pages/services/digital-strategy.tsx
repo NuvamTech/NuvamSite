@@ -1,10 +1,19 @@
+import { useNavigate } from 'react-router-dom';
+import { SEO } from '../../components/SEO';
 import { Button } from '../../components/ui/Button';
 
 export function DigitalStrategyService() {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-surface">
+      <SEO
+        title="Digital Strategy Consulting | NUVAM Tech"
+        description="NUVAM Tech crafts custom digital strategies to modernize workflows, align tech investments with business goals, and drive measurable ROI through data-driven roadmaps."
+        keywords="digital strategy consulting, digital transformation roadmap, technology strategy, NUVAM Tech"
+        canonical="/services/digital-strategy"
+      />
       {/* Hero Section */}
-      <section className="relative py-20 md:py-28 overflow-hidden">
+      <section className="relative py-12 md:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent)]/5 to-[var(--accent-2)]/5 pointer-events-none" />
         <div className="mx-auto max-w-5xl px-4 sm:px-6 relative z-10">
           <div className="text-center max-w-3xl mx-auto">
@@ -169,8 +178,11 @@ export function DigitalStrategyService() {
                 )
               }
             ].map((service, i) => (
-              <div key={i} className="bg-surface border border-hairline/50 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 hover:border-[var(--accent)]/30 group">
-                <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-[var(--accent)]/10 to-[var(--accent-2)]/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+              <div key={i} className="group bg-surface border border-hairline/50 rounded-2xl p-6
+                                     transition-all duration-300 cursor-default
+                                     hover:-translate-y-2 hover:shadow-[0_20px_40px_-8px_rgba(123,47,190,0.18)] hover:border-[var(--accent)]/30">
+                <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-[var(--accent)]/10 to-[var(--accent-2)]/10 flex items-center justify-center mb-4
+                               group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-300 text-[var(--accent)]">
                   {service.icon}
                 </div>
                 <h3 className="font-bold text-lg text-ink mb-3">{service.title}</h3>
@@ -194,7 +206,6 @@ export function DigitalStrategyService() {
           </div>
           
           <div className="relative">
-            <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-[var(--accent)]/20 via-[var(--accent)]/40 to-[var(--accent)]/20 hidden md:block" />
             <div className="space-y-12">
               {[
                 {
@@ -290,7 +301,7 @@ export function DigitalStrategyService() {
             Let's discuss your digital strategy needs and create a roadmap that drives real business value and sustainable growth.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button className="w-full sm:w-auto px-8 py-4 text-base">
+            <Button to="/#contact" className="w-full sm:w-auto px-8 py-4 text-base">
               Schedule Consultation
             </Button>
             <a

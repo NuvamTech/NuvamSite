@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { SEO } from '../components/SEO';
 import { Button } from '../components/ui/Button';
 import { TechStackMarquee } from '../components/TechStackMarquee';
 import { siteCopy } from '../content/siteCopy';
@@ -23,6 +25,7 @@ function SectionHeading({ eyebrow, title, body }: { eyebrow: string; title: stri
    MAIN PAGE EXPORT
    ════════════════════════════════════════════════════════════════════════════ */
 export function SinglePage() {
+  const navigate = useNavigate();
   const [activeSlide, setActiveSlide] = useState(0);
   const [selectedTab, setSelectedTab] = useState('power-bi');
   const [contactSubmitted, setContactSubmitted] = useState(false);
@@ -110,6 +113,12 @@ export function SinglePage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 pb-12 sm:px-6">
+      <SEO
+        title="NUVAM Tech | Digital Transformation, Microsoft Cloud & AI Solutions"
+        description="NUVAM Tech is a Microsoft Solution Partner delivering digital transformation, Power BI, Dynamics 365 ERP, Azure cloud, and AI solutions. Trusted by 120+ enterprise clients."
+        keywords="digital transformation, Microsoft Dynamics 365, Power BI, Azure cloud, AI solutions, data analytics, NUVAM Tech"
+        canonical="/"
+      />
       
       {/* ── #home: HERO INTERACTIVE SLIDER (Microsoft Fluent Mesh Styling - Dark Edition) ── */}
       <section id="home" className="scroll-mt-20 pt-4 pb-10">
@@ -292,22 +301,26 @@ export function SinglePage() {
             return (
               <div
                 key={svc.id}
-                className="group relative overflow-hidden rounded-2xl border border-hairline bg-surface p-6 transition-all duration-300"
+                className="group relative overflow-hidden rounded-2xl border border-hairline bg-surface p-6
+                           transition-all duration-300 cursor-pointer
+                           hover:-translate-y-2 hover:shadow-[0_20px_40px_-8px_rgba(123,47,190,0.18)] hover:border-[var(--accent)]/30"
+                onClick={() => navigate(`/services/${svc.id}`)}
               >
-                <div className="h-12 w-12 rounded-xl bg-bg flex items-center justify-center text-[var(--accent)] mb-4">
+                <div className="h-12 w-12 rounded-xl bg-bg flex items-center justify-center text-[var(--accent)] mb-4
+                               transition-all duration-300 group-hover:scale-110 group-hover:bg-[var(--accent)]/10 group-hover:-rotate-3">
                   {svgIcons[i % svgIcons.length]}
                 </div>
                 <h3 className="text-lg font-bold text-ink mb-2">{svc.title}</h3>
                 <p className="text-sm text-muted leading-relaxed mb-4">{svc.desc}</p>
-                <a 
-                  href="#contact" 
-                  className="inline-flex items-center text-xs font-semibold text-[var(--accent)] hover:underline gap-1 mt-auto"
+                <button 
+                  onClick={() => navigate(`/services/${svc.id}`)}
+                  className="inline-flex items-center text-xs font-semibold text-[var(--accent)] hover:underline gap-1 mt-auto cursor-pointer"
                 >
                   Learn More
                   <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                     <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                   </svg>
-                </a>
+                </button>
               </div>
             );
           })}
@@ -316,8 +329,6 @@ export function SinglePage() {
 
       {/* ── #products: PRODUCTS CAROUSEL & INTERACTIVE DEMOS ────────────── */}
       <section id="products" className="scroll-mt-20 py-12 md:py-16 border-t border-hairline/40 relative overflow-hidden">
-        {/* Glassmorphic Ornaments */}
-        <div className="pointer-events-none absolute -left-24 top-1/2 h-64 w-64 rounded-full border border-white/10 bg-gradient-to-tr from-white/5 to-[var(--accent-3)]/5 backdrop-blur-md shadow-xl animate-float-slow opacity-60 dark:border-white/5 dark:bg-white/[0.02]" />
         
         <SectionHeading
           eyebrow="Products"
@@ -367,9 +378,9 @@ export function SinglePage() {
 
         {/* Product Cards Grid (Non-animated static cards with Video upload tags) */}
         <div className="relative">
-          <p className="text-xs font-semibold text-muted uppercase tracking-wider mb-4">ISV & Industry Solutions</p>
+          <p className="text-xs font-semibold text-muted uppercase tracking-wider mb-4">Packaged Products</p>
           <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-thin snap-x">
-            {[...siteCopy.products.isv, ...siteCopy.products.industry].map((prod) => (
+            {siteCopy.products.isv.map((prod) => (
               <div 
                 key={prod.id} 
                 className="min-w-[280px] max-w-[280px] bg-surface rounded-2xl border border-hairline p-5 flex flex-col snap-start"
@@ -393,7 +404,7 @@ export function SinglePage() {
                 </div>
                 <h4 className="text-sm font-bold text-ink mb-1.5">{prod.title}</h4>
                 <p className="text-xs text-muted leading-relaxed mb-4">{prod.desc}</p>
-                <a href="#contact" className="text-xs font-semibold text-[var(--accent)] hover:underline mt-auto">Request Brochure →</a>
+                <button onClick={() => navigate(`/products/${prod.id}`)} className="text-xs font-semibold text-[var(--accent)] hover:underline mt-auto cursor-pointer text-left">View Product Details →</button>
               </div>
             ))}
           </div>

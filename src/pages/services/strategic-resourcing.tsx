@@ -1,9 +1,15 @@
+import { SEO } from '../../components/SEO';
 import { Button } from '../../components/ui/Button';
 
 export function StrategicResourcingService() {
   return (
     <div className="min-h-screen bg-surface">
-      <section className="relative py-20 md:py-28 overflow-hidden">
+      <SEO
+        title="Strategic IT Staffing & Tech Talent Sourcing | Nuvam Infotech"
+        description="Hire skilled software developers, data scientists, and project managers to augment your internal engineering team."
+        keywords="staff augmentation, IT staffing, tech talent, contract developers"
+      />
+      <section className="relative py-12 md:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent)]/5 to-[var(--accent-2)]/5 pointer-events-none" />
         <div className="mx-auto max-w-5xl px-4 sm:px-6 relative z-10">
           <div className="text-center max-w-3xl mx-auto">
@@ -88,7 +94,7 @@ export function StrategicResourcingService() {
                       </div>
                       <h3 className="font-bold text-ink">Augmentation</h3>
                     </div>
-                    <p className="text-sm text-muted">补充你的现有团队 with additional specialists</p>
+                    <p className="text-sm text-muted">Supplement your existing team with additional specialists</p>
                   </div>
                 </div>
               </div>

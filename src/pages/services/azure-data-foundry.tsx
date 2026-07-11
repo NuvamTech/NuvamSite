@@ -1,9 +1,15 @@
+import { SEO } from '../../components/SEO';
 import { Button } from '../../components/ui/Button';
 
 export function AzureDataFoundryService() {
   return (
     <div className="min-h-screen bg-surface">
-      <section className="relative py-20 md:py-28 overflow-hidden">
+      <SEO
+        title="Azure Data Factory & Integration Services | Data Engineering"
+        description="Integrate disparate enterprise databases with Azure Data Factory. Clean, transform, and pipe big data into secure data lakes."
+        keywords="Azure Data Factory, data integration services, data pipelines, ETL architecture, cloud data warehouse"
+      />
+      <section className="relative py-12 md:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent)]/5 to-[var(--accent-2)]/5 pointer-events-none" />
         <div className="mx-auto max-w-5xl px-4 sm:px-6 relative z-10">
           <div className="text-center max-w-3xl mx-auto">

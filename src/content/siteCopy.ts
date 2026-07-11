@@ -31,10 +31,7 @@ export const siteCopy = {
         { id: 'digital-strategy', title: 'Digital Strategy', desc: 'Custom strategies designed to modernize workflows, drive efficiency, and align technology investments with business objectives.' },
         { id: 'strategic-resourcing', title: 'Strategic Resourcing', desc: 'Deploy highly skilled software engineering and IT talent directly to your project teams.' },
         { id: 'change-management', title: 'Change Management & Adoption', desc: 'Ensure smooth adoption of new software systems with custom training and cultural alignment.' },
-        { id: 'corporate-trainings', title: 'Corporate Trainings', desc: 'Upskill your enterprise teams in Microsoft 365, Azure, Dynamics 365, and AI.' },
-        { id: 'data-audit', title: 'Data Audit', desc: 'Comprehensive analysis of database hygiene, security controls, and integration gaps.' },
-        { id: 'microsoft-licensing', title: 'Microsoft Licensing', desc: 'Optimize your Microsoft enterprise agreement, subscriptions, and licensing costs.' },
-        { id: 'sustainability-manager', title: 'Sustainability Manager', desc: 'Track and report carbon footprint and ESG metrics using Microsoft Cloud.' }
+        { id: 'data-audit', title: 'Data Audit', desc: 'Comprehensive analysis of database hygiene, security controls, and integration gaps.' }
       ]
     },
     {
@@ -44,13 +41,6 @@ export const siteCopy = {
         { id: 'data-warehouse', title: 'Data Warehouse', desc: 'Centralize structured and unstructured business intelligence data from multiple software systems.' },
         { id: 'ai-iot', title: 'Artificial Intelligence and IoT', desc: 'Intelligent face-recognition models, predictive analytics, and connected sensor integrations.' },
         { id: 'azure-data-foundry', title: 'Azure Data Foundry', desc: 'Scalable data integration pipelines to extract, load, and transform raw enterprise data.' }
-      ]
-    },
-    {
-      category: 'Business Applications',
-      items: [
-        { id: 'dynamics-365', title: 'Microsoft Dynamics 365', desc: 'End-to-end ERP implementation spanning financials, inventory, retail operations, and HR modules.' },
-        { id: 'm365-deployment', title: 'Microsoft 365 Deployment', desc: 'Implement modern workplace tools including Microsoft Teams, SharePoint, Outlook, and OneDrive.' }
       ]
     },
     {
@@ -77,16 +67,12 @@ export const siteCopy = {
   /* Products categorized for Product slider & Mega Menu */
   products: {
     isv: [
-      { id: 'nes', title: 'NES (Novum Entrance System)', desc: 'Cloud-based visitor management system for busy business centers. Supports guest pre-registration, access control, and secure check-ins.', image: '/assets/img/products/entrance-system.webp' },
+      { id: 'nes', title: 'NES (Nuvam Entrance System)', desc: 'Cloud-based visitor management system for busy business centers. Supports guest pre-registration, access control, and secure check-ins.', image: '/assets/img/products/entrance-system.webp' },
       { id: 'ocr', title: 'OCR Certification Directory', desc: 'Convert paper records into searchable digital documents. Ideal for storing certificates, contracts, reports, and regulatory files.', image: '/assets/img/products/ocr.webp' },
       { id: 'ess', title: 'ESS - Employee Self Service', desc: 'A secure, user-friendly portal that empowers employees to manage their profiles, leave requests, and HR information anytime, anywhere.', image: '/assets/img/products/ess.webp' },
       { id: 'face-rec', title: 'Face Recognition & Detection', desc: 'Identify and count people in real time using video analytics. Perfect for secure access, event tracking, and smart surveillance.', image: '/assets/img/products/face-recognition.webp' }
     ],
-    industry: [
-      { id: 'bidding-platform', title: 'Commodity Bidding Platform', desc: 'Flexible SaaS platform for digital trading. Create product listings, set approval flows, monitor activity, and access real-time analytics.', image: '/assets/img/products/bidding.webp' },
-      { id: 'd365-automations', title: 'D365 Automations', desc: 'Enhance Microsoft Dynamics 365 workflows with intelligent automation. Simplify data entry, approvals, and reporting for faster results.', image: '/assets/img/products/ds365.png' },
-      { id: 'airport-revenue', title: 'Airport Revenue Management ISV', desc: 'Comprehensive revenue management tool designed for airports to optimize billing, contracts, and income forecasting through automation.', image: '/assets/img/products/airport-revenue.webp' }
-    ]
+    industry: []
   },
 
   /* About section values */
@@ -95,7 +81,7 @@ export const siteCopy = {
     headline: 'Trusted expertise shaped by years of innovation and global talent',
     description1: 'NUVAM Tech delivers advanced digital solutions including data analytics, ERP systems, and custom software to help businesses improve decision-making and efficiency.',
     description2: 'We deliver data analytics, consulting, development, and AI/IoT solutions across industries like healthcare, telecom, construction, and government.',
-    description3: 'As a Microsoft Solution Partner, we implement cloud technologies across Data & AI, Business Applications, and Modern Workplace. With expertise across multiple industries, we drive digital transformation using AI, IoT, and data-driven strategies creating long-lasting business value.',
+    description3: 'As a Microsoft Solution Partner, we implement cloud technologies across Data & AI, Cloud Solutions, and Custom Software. With expertise across multiple industries, we drive digital transformation using AI, IoT, and data-driven strategies creating long-lasting business value.',
     slogan: 'OUR SLOGAN REFLECTS GOALS, BELIEFS, KNOWLEDGE AND TRANSFORMATION THAT WE BRING INTO ORGANIZATIONS. WHAT WE DO CREATES LONG-LASTING VALUE.'
   },
 
