@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -113,6 +114,18 @@ app.post('/api/auth/login', async (req, res) => {
     res.status(500).json({ message: 'Server error during login' });
   }
 });
+
+
+// Serve static frontend assets if the build folder exists
+const distPath = path.resolve(__dirname, '../dist');
+if (fs.existsSync(distPath)) {
+  app.use(express.static(distPath));
+  
+  // For SPA routing, redirect all non-API paths to index.html
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(distPath, 'index.html'));
+  });
+}
 
 app.listen(PORT, () => {
   console.log(`NUVAM Auth Server is running on port ${PORT}`);

@@ -124,8 +124,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialTa
     setLoading(true);
 
     const url = activeTab === 'login' 
-      ? 'http://localhost:5000/api/auth/login'
-      : 'http://localhost:5000/api/auth/signup';
+      ? '/api/auth/login'
+      : '/api/auth/signup';
 
     const payload = activeTab === 'login'
       ? { email: cleanEmail, password: cleanPassword }
