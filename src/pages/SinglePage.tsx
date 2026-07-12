@@ -4,6 +4,7 @@ import { SEO } from '../components/SEO';
 import { Button } from '../components/ui/Button';
 import { TechStackMarquee } from '../components/TechStackMarquee';
 import { siteCopy } from '../content/siteCopy';
+import { SmartVideo } from '../components/ui/SmartVideo';
 
 /* ════════════════════════════════════════════════════════════════════════════
    SHARED HELPERS
@@ -223,7 +224,7 @@ export function SinglePage() {
       <TechStackMarquee />
 
       {/* ── #about: ABOUT SECTION ──────────────────────────────────────── */}
-      <section id="about" className="scroll-mt-20 py-12 md:py-16 border-t border-hairline/40 relative overflow-hidden">
+      <section id="about" className="scroll-mt-20 pt-6 pb-12 md:pt-8 md:pb-16 border-t border-hairline/40 relative overflow-hidden">
         {/* Glassmorphic Ornaments */}
         <div className="pointer-events-none absolute -left-20 top-1/3 h-56 w-56 rounded-full border border-white/10 bg-gradient-to-br from-white/5 to-[var(--accent)]/5 backdrop-blur-md shadow-xl animate-float-slow opacity-60 dark:border-white/5 dark:bg-white/[0.02]" />
         
@@ -247,23 +248,16 @@ export function SinglePage() {
 
           {/* Right Visual Box (HTML5 video served from public/videos/about-intro.mp4) */}
           <div className="relative aspect-video rounded-3xl overflow-hidden shadow-lg border border-hairline bg-surface p-px">
-            <video 
+            <SmartVideo 
               className="w-full h-full object-cover rounded-3xl"
               src="/videos/about-intro.mp4"
-              controls
-              autoPlay
-              muted
-              playsInline
-              loop
-            >
-              Your browser does not support the video tag.
-            </video>
+            />
           </div>
         </div>
       </section>
 
       {/* ── #services: CAPABILITIES GRID (10 services with inline SVGs) ── */}
-      <section id="services" className="scroll-mt-20 py-12 md:py-16 border-t border-hairline/40 relative overflow-hidden">
+      <section id="services" className="scroll-mt-20 pt-6 pb-12 md:pt-8 md:pb-16 border-t border-hairline/40 relative overflow-hidden">
         {/* Glassmorphic Ornaments */}
         <div className="pointer-events-none absolute -right-28 top-1/4 h-72 w-72 rounded-full border border-white/10 bg-gradient-to-br from-white/5 to-[var(--accent-2)]/5 backdrop-blur-lg shadow-2xl animate-float-reverse opacity-50 dark:border-white/5 dark:bg-white/[0.01]" />
         
@@ -328,7 +322,7 @@ export function SinglePage() {
       </section>
 
       {/* ── #products: PRODUCTS CAROUSEL & INTERACTIVE DEMOS ────────────── */}
-      <section id="products" className="scroll-mt-20 py-12 md:py-16 border-t border-hairline/40 relative overflow-hidden">
+      <section id="products" className="scroll-mt-20 pt-6 pb-12 md:pt-8 md:pb-16 border-t border-hairline/40 relative overflow-hidden">
         
         <SectionHeading
           eyebrow="Products"
@@ -338,75 +332,47 @@ export function SinglePage() {
 
         {/* 2 Flagship Product Demos with Video Players Embedded side by side */}
         <div className="grid gap-6 md:grid-cols-2 mb-10">
-          <div className="bg-surface rounded-3xl border border-hairline p-5 space-y-4">
-            <div>
-              <span className="text-[10px] font-bold uppercase tracking-widest brand-grad-text">VisionGate™ Video Preview</span>
-              <h3 className="text-lg font-bold text-ink mt-1">Computer Vision Attendance</h3>
-              <p className="text-xs text-muted mt-1 mb-3">Sub-second face detection with anti-spoofing landmarks validation.</p>
-            </div>
-            <video 
-              className="w-full h-[320px] object-cover rounded-2xl border border-hairline"
-              src="/videos/products/visiongate.mp4"
-              controls
-              autoPlay
-              muted
-              playsInline
-              loop
-            >
-              Your browser does not support the video tag.
-            </video>
-          </div>
-          <div className="bg-surface rounded-3xl border border-hairline p-5 space-y-4">
-            <div>
-              <span className="text-[10px] font-bold uppercase tracking-widest brand-grad-text">NUVAM Commerce Video Preview</span>
-              <h3 className="text-lg font-bold text-ink mt-1">White-Label Custom Storefront</h3>
-              <p className="text-xs text-muted mt-1 mb-3">Self-serve instant branding switch and automated order execution loops.</p>
-            </div>
-            <video 
-              className="w-full h-[320px] object-cover rounded-2xl border border-hairline"
-              src="/videos/products/commerce.mp4"
-              controls
-              autoPlay
-              muted
-              playsInline
-              loop
-            >
-              Your browser does not support the video tag.
-            </video>
-          </div>
-        </div>
-
-        {/* Product Cards Grid (Non-animated static cards with Video upload tags) */}
-        <div className="relative">
-          <p className="text-xs font-semibold text-muted uppercase tracking-wider mb-4">Packaged Products</p>
-          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-thin snap-x">
-            {siteCopy.products.isv.map((prod) => (
-              <div 
-                key={prod.id} 
-                className="min-w-[280px] max-w-[280px] bg-surface rounded-2xl border border-hairline p-5 flex flex-col snap-start"
-              >
-                {/* HTML5 video element for uploading product demonstration files */}
-                <div className="relative h-32 rounded-xl overflow-hidden bg-bg mb-4 border border-hairline flex items-center justify-center">
-                  <video 
-                    className="w-full h-full object-cover"
-                    src={`/videos/products/${prod.id}.mp4`}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    onError={(e) => {
-                      // Fallback overlay when video hasn't been uploaded yet
-                      (e.target as HTMLElement).style.display = 'none';
-                    }}
-                  />
-                  {/* Visual fallback when video doesn't exist */}
-                  <span className="absolute text-xl font-display font-bold brand-grad-text">{prod.title.charAt(0)}</span>
-                </div>
-                <h4 className="text-sm font-bold text-ink mb-1.5">{prod.title}</h4>
-                <p className="text-xs text-muted leading-relaxed mb-4">{prod.desc}</p>
-                <button onClick={() => navigate(`/products/${prod.id}`)} className="text-xs font-semibold text-[var(--accent)] hover:underline mt-auto cursor-pointer text-left">View Product Details →</button>
+          <div className="bg-surface rounded-3xl border border-hairline p-5 space-y-4 flex flex-col justify-between">
+            <div className="space-y-4">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-widest brand-grad-text">VisionGate™ Video Preview</span>
+                <h3 className="text-lg font-bold text-ink mt-1">Computer Vision Attendance</h3>
+                <p className="text-xs text-muted mt-1 mb-3">Sub-second face detection with anti-spoofing landmarks validation.</p>
               </div>
-            ))}
+              <SmartVideo 
+                className="w-full aspect-video object-cover rounded-2xl border border-hairline"
+                src="/videos/products/visiongate.mp4"
+              />
+            </div>
+            <div className="pt-2">
+              <button 
+                onClick={() => navigate('/products/visiongate')} 
+                className="w-full sm:w-auto inline-flex items-center justify-center rounded-xl border border-hairline bg-surface px-4 py-2.5 text-xs font-semibold text-ink hover:border-[var(--accent)] hover:bg-surface/50 transition-all cursor-pointer"
+              >
+                Explore VisionGate™ →
+              </button>
+            </div>
+          </div>
+          <div className="bg-surface rounded-3xl border border-hairline p-5 space-y-4 flex flex-col justify-between">
+            <div className="space-y-4">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-widest brand-grad-text">NUVAM Commerce Video Preview</span>
+                <h3 className="text-lg font-bold text-ink mt-1">White-Label Custom Storefront</h3>
+                <p className="text-xs text-muted mt-1 mb-3">Self-serve instant branding switch and automated order execution loops.</p>
+              </div>
+              <SmartVideo 
+                className="w-full aspect-video object-cover rounded-2xl border border-hairline"
+                src="/videos/products/commerce.mp4"
+              />
+            </div>
+            <div className="pt-2">
+              <button 
+                onClick={() => navigate('/products/commerce')} 
+                className="w-full sm:w-auto inline-flex items-center justify-center rounded-xl border border-hairline bg-surface px-4 py-2.5 text-xs font-semibold text-ink hover:border-[var(--accent)] hover:bg-surface/50 transition-all cursor-pointer"
+              >
+                Explore NUVAM Commerce™ →
+              </button>
+            </div>
           </div>
         </div>
       </section>
@@ -477,7 +443,7 @@ export function SinglePage() {
       </section>
 
       {/* ── #contact: CONTACT FORM ─────────────────────────────────────── */}
-      <section id="contact" className="scroll-mt-20 py-12 md:py-16 border-t border-hairline/40 relative overflow-hidden">
+      <section id="contact" className="scroll-mt-20 pt-6 pb-12 md:pt-8 md:pb-16 border-t border-hairline/40 relative overflow-hidden">
         {/* Glassmorphic Ornaments */}
         <div className="pointer-events-none absolute -right-20 bottom-12 h-60 w-60 rounded-full border border-white/10 bg-gradient-to-br from-white/5 to-[var(--accent-gold)]/5 backdrop-blur-md shadow-2xl animate-float-reverse opacity-50 dark:border-white/5 dark:bg-white/[0.02]" />
         

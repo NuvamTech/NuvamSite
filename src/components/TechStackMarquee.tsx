@@ -38,37 +38,54 @@ export function TechStackMarquee() {
     return (
       <div 
         key={`${copyId}-${index}`} 
-        className="flex items-center gap-3 select-none group cursor-default"
+        className="flex items-center gap-3 select-none group cursor-pointer"
+        style={{ '--tech-color': tech.color } as React.CSSProperties}
       >
         <div 
           className="h-12 w-12 flex items-center justify-center rounded-xl p-2 bg-surface border border-hairline/40 shadow-xs
-                     transition-all duration-300 ease-out
-                     group-hover:scale-110 group-hover:shadow-md group-hover:border-[var(--accent)]/40
-                     group-hover:-translate-y-1"
+                     transition-all duration-400 ease-[cubic-bezier(0.34,1.56,0.64,1)]
+                     group-hover:scale-115 group-hover:shadow-[0_0_25px_rgba(var(--tech-color-rgb),0.3)]
+                     group-hover:border-[var(--tech-color)]/60
+                     group-hover:-translate-y-1.5 relative overflow-hidden"
+          style={{
+            boxShadow: `hover:0 10px 25px -5px ${tech.color}40`
+          }}
         >
+          {/* Subtle hover glow backdrop inside the card */}
+          <div 
+            className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300 pointer-events-none"
+            style={{ backgroundColor: tech.color }}
+          />
           <img 
             src={`https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/${tech.path}`} 
             alt={`${tech.name} logo`}
-            className={`w-8 h-8 object-contain transition-transform duration-300 ${tech.darkInvert ? 'dark:brightness-200 dark:contrast-200 dark:invert' : ''}`}
+            className={`w-8 h-8 object-contain transition-transform duration-300 group-hover:rotate-6 ${tech.darkInvert ? 'dark:brightness-200 dark:contrast-200 dark:invert' : ''}`}
             loading="lazy"
           />
         </div>
-        <span className="text-sm font-semibold tracking-wide text-ink/70 group-hover:text-[var(--accent)] transition-colors duration-200">
-          {tech.name}
+        <span 
+          className="text-sm font-semibold tracking-wide text-ink/70 transition-all duration-300"
+          style={{
+            color: 'var(--color-ink-70)'
+          }}
+        >
+          <span className="group-hover:text-[var(--tech-color)] transition-colors duration-300">
+            {tech.name}
+          </span>
         </span>
       </div>
     );
   };
 
   return (
-    <section className="w-full border-y border-hairline/50 bg-surface/30 py-8 my-4 backdrop-blur-xs" aria-label="Technology stack">
-      <div className="relative w-full overflow-hidden">
+    <section className="w-full border-y border-hairline/50 bg-surface/30 my-4 backdrop-blur-xs" aria-label="Technology stack">
+      <div className="relative w-full overflow-hidden marquee-container py-8">
         {/* Gradient fade on left & right */}
         <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-24 z-10 bg-gradient-to-r from-bg to-transparent" />
         <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-24 z-10 bg-gradient-to-l from-bg to-transparent" />
         
         {/* Track containing 2 copies for seamless loop — pauses on hover */}
-        <div className="flex w-max animate-marquee hover:[animation-play-state:paused]">
+        <div className="flex w-max animate-marquee marquee-track">
           {/* First copy */}
           <div className="flex items-center gap-16 px-8">
             {TECH_STACK.map((tech, i) => renderItem(tech, i, 'first'))}
@@ -93,8 +110,25 @@ export function TechStackMarquee() {
           animation: marquee 50s linear infinite;
         }
 
-        .animate-marquee:hover {
+        /* Pause animation on hover */
+        .marquee-container:hover .animate-marquee {
           animation-play-state: paused;
+        }
+
+        /* Depth of field effect: fade and blur other items when one is hovered */
+        .marquee-track:hover .group:not(:hover) {
+          opacity: 0.35;
+          filter: grayscale(0.4) blur(0.5px);
+          transform: scale(0.92);
+        }
+
+        .group {
+          transition: opacity 0.4s ease, filter 0.4s ease, transform 0.4s ease;
+        }
+
+        /* Advanced dynamic glows */
+        .group:hover div {
+          box-shadow: 0 10px 30px -5px var(--tech-color), 0 0 15px -3px var(--tech-color);
         }
       `}</style>
     </section>

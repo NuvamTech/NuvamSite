@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { siteCopy } from '../../content/siteCopy';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { AuthModal } from '../auth/AuthModal';
 
 export function Header() {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
@@ -17,6 +18,39 @@ export function Header() {
   const [hoveredEl, setHoveredEl] = useState<HTMLElement | null>(null);
   const [activeStyle, setActiveStyle] = useState({ left: 0, width: 0 });
   const [hoverStyle, setHoverStyle] = useState({ left: 0, width: 0, opacity: 0 });
+
+  const [user, setUser] = useState<any>(null);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authModalTab, setAuthModalTab] = useState<'login' | 'signup'>('login');
+
+  useEffect(() => {
+    const checkUser = () => {
+      const stored = localStorage.getItem('nuvam-user');
+      if (stored) {
+        try {
+          setUser(JSON.parse(stored));
+        } catch (e) {
+          setUser(null);
+        }
+      } else {
+        setUser(null);
+      }
+    };
+    checkUser();
+    window.addEventListener('nuvam-auth-change', checkUser);
+    return () => window.removeEventListener('nuvam-auth-change', checkUser);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('nuvam-token');
+    localStorage.removeItem('nuvam-user');
+    window.dispatchEvent(new Event('nuvam-auth-change'));
+  };
+
+  const openAuthModal = (tab: 'login' | 'signup') => {
+    setAuthModalTab(tab);
+    setIsAuthModalOpen(true);
+  };
 
   /* Scroll to top on mount */
   useEffect(() => {
@@ -166,7 +200,32 @@ export function Header() {
     if (productId) {
       navigate(`/products/${productId}`);
     } else {
-      navigate('/products');
+      if (location.pathname === '/') {
+        const el = document.getElementById('products');
+        if (el) {
+          const headerHeight = 72;
+          const elementPosition = el.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - headerHeight;
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }
+      } else {
+        navigate('/');
+        setTimeout(() => {
+          const el = document.getElementById('products');
+          if (el) {
+            const headerHeight = 72;
+            const elementPosition = el.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerHeight;
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: 'smooth'
+            });
+          }
+        }, 150);
+      }
     }
     setMenuOpen(false);
     setHoveredMenu(null);
@@ -409,6 +468,36 @@ export function Header() {
               >
                 Contact Us
               </a>
+
+              {user ? (
+                <div className="hidden sm:flex items-center gap-3">
+                  <span className="text-xs font-semibold text-ink/80">Hello, {user.name}</span>
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="inline-flex items-center justify-center rounded-full border border-hairline/60 bg-surface/40 px-4 py-2 text-xs font-semibold text-ink backdrop-blur-md transition-all duration-300 hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/30 cursor-pointer"
+                  >
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                <div className="hidden sm:flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => openAuthModal('login')}
+                    className="inline-flex items-center justify-center rounded-full border border-hairline/60 bg-surface/40 px-4 py-2 text-xs font-semibold text-ink backdrop-blur-md transition-all duration-300 hover:bg-surface/75 hover:border-[var(--accent)]/50 hover:shadow-[0_0_15px_rgba(var(--accent-rgb),0.15)] cursor-pointer"
+                  >
+                    Login
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => openAuthModal('signup')}
+                    className="inline-flex items-center justify-center rounded-full border border-[var(--accent)]/30 bg-gradient-to-r from-[var(--accent)]/15 to-[var(--accent-2)]/15 px-4 py-2 text-xs font-semibold text-[var(--accent)] backdrop-blur-md transition-all duration-300 hover:from-[var(--accent)]/25 hover:to-[var(--accent-2)]/25 hover:border-[var(--accent)]/50 hover:shadow-[0_0_20px_rgba(var(--accent-rgb),0.25)] cursor-pointer"
+                  >
+                    Sign Up
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Mobile hamburger */}
@@ -619,7 +708,7 @@ export function Header() {
         </nav>
         
         {/* Contact Us Button inside Hamburger drawer */}
-        <div className="p-5 border-t border-hairline/50 bg-surface/50 backdrop-blur-md shrink-0">
+        <div className="p-5 border-t border-hairline/50 bg-surface/50 backdrop-blur-md shrink-0 flex flex-col gap-3">
           <a
             href="#contact"
             onClick={(e) => handleNavClick(e, 'contact')}
@@ -627,8 +716,46 @@ export function Header() {
           >
             Contact Us
           </a>
+
+          {user ? (
+            <div className="flex flex-col gap-2 items-center">
+              <span className="text-xs font-semibold text-ink/80">Logged in as {user.name}</span>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="flex w-full items-center justify-center rounded-xl border border-hairline/60 bg-surface/40 py-3 text-xs font-semibold text-ink transition-all hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/30 cursor-pointer"
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => openAuthModal('login')}
+                className="flex-1 flex items-center justify-center rounded-xl border border-hairline/60 bg-surface/40 py-3 text-xs font-semibold text-ink transition-all hover:bg-surface/75 cursor-pointer"
+              >
+                Login
+              </button>
+              <button
+                type="button"
+                onClick={() => openAuthModal('signup')}
+                className="flex-1 flex items-center justify-center rounded-xl border border-[var(--accent)]/30 bg-gradient-to-r from-[var(--accent)]/15 to-[var(--accent-2)]/15 py-3 text-xs font-semibold text-[var(--accent)] transition-all hover:from-[var(--accent)]/25 hover:to-[var(--accent-2)]/25 cursor-pointer"
+              >
+                Sign Up
+              </button>
+            </div>
+          )}
         </div>
       </div>
+      
+      {/* Auth Modal */}
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)} 
+        initialTab={authModalTab} 
+      />
+
       {/* Hidden SVG Gooey Filter definition */}
       <svg style={{ position: 'absolute', width: 0, height: 0, pointerEvents: 'none' }} aria-hidden="true">
         <defs>

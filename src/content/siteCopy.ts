@@ -67,10 +67,8 @@ export const siteCopy = {
   /* Products categorized for Product slider & Mega Menu */
   products: {
     isv: [
-      { id: 'nes', title: 'NES (Nuvam Entrance System)', desc: 'Cloud-based visitor management system for busy business centers. Supports guest pre-registration, access control, and secure check-ins.', image: '/assets/img/products/entrance-system.webp' },
-      { id: 'ocr', title: 'OCR Certification Directory', desc: 'Convert paper records into searchable digital documents. Ideal for storing certificates, contracts, reports, and regulatory files.', image: '/assets/img/products/ocr.webp' },
-      { id: 'ess', title: 'ESS - Employee Self Service', desc: 'A secure, user-friendly portal that empowers employees to manage their profiles, leave requests, and HR information anytime, anywhere.', image: '/assets/img/products/ess.webp' },
-      { id: 'face-rec', title: 'Face Recognition & Detection', desc: 'Identify and count people in real time using video analytics. Perfect for secure access, event tracking, and smart surveillance.', image: '/assets/img/products/face-recognition.webp' }
+      { id: 'visiongate', title: 'VisionGate™ Computer Vision Attendance', desc: 'Sub-second face detection with anti-spoofing landmarks validation.', image: '/assets/img/products/face-recognition.webp' },
+      { id: 'commerce', title: 'NUVAM Commerce™ White-Label Storefront', desc: 'Self-serve instant branding switch and automated order execution loops.', image: '/assets/img/products/ess.webp' }
     ],
     industry: []
   },

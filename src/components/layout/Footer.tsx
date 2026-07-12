@@ -102,7 +102,6 @@ export function Footer() {
             <span>·</span>
             <span className="hover:text-ink cursor-pointer">Terms of Service</span>
             <span>·</span>
-            <span className="hover:text-ink cursor-pointer">Microsoft Partner Agreement</span>
           </div>
         </div>
       </div>

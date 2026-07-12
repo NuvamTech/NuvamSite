@@ -1,6 +1,7 @@
 import { SEO } from '../../components/SEO';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '../../components/ui/Button';
+import { SmartVideo } from '../../components/ui/SmartVideo';
 
 interface ProductData {
   title: string;
@@ -10,89 +11,16 @@ interface ProductData {
   features: string[];
   specs: { label: string; value: string }[];
   useCases: { title: string; desc: string }[];
+  videoSrc?: string;
 }
 
 const PRODUCTS_CONTENT: Record<string, ProductData> = {
-  nes: {
-    title: 'NES (Nuvam Entrance System)',
+  visiongate: {
+    title: 'VisionGate™ Computer Vision Attendance',
     category: 'ISV Product',
-    subtitle: 'Modern cloud-based visitor management system for enterprise offices and business centers.',
-    description: 'Nuvam Entrance System (NES) streamlines the check-in process for guests, contractors, and employees. Offering features like pre-registration, automated host alerts, custom badge printing, and instant emergency roll calls, NES ensures your facilities remain secure and welcoming.',
-    features: [
-      'Digital guest pre-registration via email invitations',
-      'Instant SMS/Email host notifications upon guest arrival',
-      'Thermal badge printing and automated QR code check-in',
-      'Real-time emergency dashboard & occupancy roll call',
-      'GDPR-compliant data retention policy management',
-      'Hardware integration with speed gates and turnstiles'
-    ],
-    specs: [
-      { label: 'Deployment', value: 'SaaS / Private Azure Cloud' },
-      { label: 'Integrations', value: 'Microsoft Teams, Outlook, Slack' },
-      { label: 'Supported HW', value: 'iPad, Zebra Printers, Barcode Scanners' },
-      { label: 'Security', value: 'OAuth 2.0, SSL Encryption, Biometric Support' }
-    ],
-    useCases: [
-      { title: 'Business Centers', desc: 'Manage multi-tenant visitor tracking across multiple buildings with centralized administration.' },
-      { title: 'Corporate Offices', desc: 'Secure corporate lobbies with custom NDA signings, health screening forms, and automated badge issuing.' },
-      { title: 'Industrial Facilities', desc: 'Ensure safety compliance by verifying guest credentials and safety briefings before granting entry.' }
-    ]
-  },
-  ocr: {
-    title: 'OCR Certification Directory',
-    category: 'ISV Product',
-    subtitle: 'Extract, organize, and query physical document records with advanced AI Optical Character Recognition.',
-    description: 'Transform your physical archives, contracts, paper certificates, and files into structured, instantly searchable databases. Utilizing industry-leading OCR models, this directory automatically reads, classifies, indexes, and stores your documents with absolute precision and security.',
-    features: [
-      'Multi-language document text extraction and scanning',
-      'Automated categorization & AI document classification',
-      'Full-text fuzzy search across thousands of files',
-      'Sensitive data masking (PII) and redaction tools',
-      'Version control and historical edit tracking',
-      'Batch upload with automatic structure recognition'
-    ],
-    specs: [
-      { label: 'Tech Stack', value: 'Azure AI Document Intelligence, Python, Node.js' },
-      { label: 'Output Formats', value: 'PDF, JSON, CSV, Excel' },
-      { label: 'Search Engine', value: 'Elasticsearch / AI Vector Search' },
-      { label: 'Compliance', value: 'ISO 27001, HIPAA, GDPR compliant architecture' }
-    ],
-    useCases: [
-      { title: 'Legal & Compliance', desc: 'Scan and search historical contracts, corporate resolutions, and legacy audit documents.' },
-      { title: 'Academic / HR', desc: 'Digitize university certificates, transcripts, and employee files for fast background verification.' },
-      { title: 'Logistics', desc: 'Instantly scan and process physical shipping invoices, custom documents, and delivery receipts.' }
-    ]
-  },
-  ess: {
-    title: 'Employee Self Service Portal (ESS)',
-    category: 'ISV Product',
-    subtitle: 'Empower your workforce to manage HR tasks, profiles, and leaves securely from anywhere.',
-    description: 'Simplify human resource management and minimize administrative overhead. The ESS portal provides employees with a intuitive, modern interface to view payslips, submit leave requests, track working hours, and update profiles, all while automating HR approvals.',
-    features: [
-      'Interactive dashboard for time-off and leave requests',
-      'Digital profile management and document storage',
-      'Automated multi-level manager approval workflows',
-      'Secure payslip and tax document delivery',
-      'Timesheet submission with geo-tagging support',
-      'Mobile-friendly responsive web application'
-    ],
-    specs: [
-      { label: 'Platform', value: 'React / Next.js Web App' },
-      { label: 'Database', value: 'Microsoft SQL Server / PostgreSQL' },
-      { label: 'Integrations', value: 'Dynamics 365 HR, SAP, Oracle Cloud' },
-      { label: 'Authentication', value: 'Azure Active Directory, Single Sign-On' }
-    ],
-    useCases: [
-      { title: 'Hybrid Teams', desc: 'Enable remote workers to submit timesheets, request PTO, and receive HR messages easily.' },
-      { title: 'Retail Operations', desc: 'Manage shifting schedules, leave swaps, and time-off tracking for store employees.' },
-      { title: 'Enterprise Organizations', desc: 'Consolidate multiple HR databases into a single, cohesive portal for global employees.' }
-    ]
-  },
-  'face-rec': {
-    title: 'Face Recognition & Video Analytics',
-    category: 'ISV Product',
-    subtitle: 'Real-time security analytics and facial recognition driven by advanced edge computer vision.',
+    subtitle: 'Sub-second face detection with anti-spoofing landmarks validation.',
     description: 'Protect physical boundaries, automate attendance logs, and understand visitor flows with real-time video stream intelligence. Configured to deploy on standard security cameras, our facial recognition solution runs on-premises or in the cloud with strict security.',
+    videoSrc: '/videos/products/visiongate.mp4',
     features: [
       'Sub-second face recognition and person matching',
       'Real-time alert notifications for restricted zones',
@@ -112,6 +40,32 @@ const PRODUCTS_CONTENT: Record<string, ProductData> = {
       { title: 'Smart Retail', desc: 'Monitor demographic trends, visitor dwell time, and VIP customer arrivals securely.' },
       { title: 'Event Management', desc: 'Speed up ticket verification and credentials scanning for large scale conference halls.' }
     ]
+  },
+  commerce: {
+    title: 'NUVAM Commerce™ White-Label Storefront',
+    category: 'ISV Product',
+    subtitle: 'Self-serve instant branding switch and automated order execution loops.',
+    description: 'Simplify retail operations, order tracking, and branding customization. NUVAM Commerce provides a white-labeled custom storefront allowing companies to launch custom branding instantly, track orders, and automate supply-chain actions seamlessly.',
+    videoSrc: '/videos/products/commerce.mp4',
+    features: [
+      'Instant branding configuration and custom domains',
+      'Real-time stock level monitoring and supplier synchronization',
+      'Automated order processing and logistics dispatch',
+      'Integrated payment gateways (Stripe, PayPal, local bank transfers)',
+      'Admin analytics dashboard with revenue, orders, and customer trends',
+      'Fully responsive, SEO-optimized client storefront design'
+    ],
+    specs: [
+      { label: 'Tech Stack', value: 'React / Next.js, Node.js, PostgreSQL' },
+      { label: 'Deployment', value: 'Docker containerized / Vercel Cloud' },
+      { label: 'API Integrations', value: 'REST API, Webhooks, GraphQL connectors' },
+      { label: 'Performance', value: 'Sub-100ms Page Load time with SSR caching' }
+    ],
+    useCases: [
+      { title: 'Brand Franchises', desc: 'Launch unified store architectures with localized franchisee branding control.' },
+      { title: 'Corporate Gifting', desc: 'Establish internal custom ordering systems for employee rewards and swags.' },
+      { title: 'Digital Marketplace', desc: 'Run multi-vendor eCommerce platforms with separate vendor dashboard controls.' }
+    ]
   }
 };
 
@@ -125,8 +79,8 @@ export function ProductDetail() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-surface">
       <SEO
-        title="Nuvam Entrance System (NES) & Enterprise Software"
-        description="Learn about the Nuvam Entrance System (NES), our cloud-based visitor management system for secure and modern check-ins."
+        title="VisionGate & NUVAM Commerce Systems"
+        description="Learn about NUVAM Tech systems: VisionGate and NUVAM Commerce."
         keywords="visitor management, NES, entrance system, visitor registration, access control"
       />
         <div className="text-center py-20">
@@ -139,6 +93,11 @@ export function ProductDetail() {
 
   return (
     <div className="min-h-screen bg-surface">
+      <SEO
+        title={`${product.title} - Enterprise Solutions`}
+        description={product.subtitle}
+        keywords="visitor management, NES, entrance system, visitor registration, access control"
+      />
       {/* Hero Section */}
       <section className="relative py-12 md:py-16 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent)]/5 to-[var(--accent-2)]/5 pointer-events-none" />
@@ -156,6 +115,21 @@ export function ProductDetail() {
           </div>
         </div>
       </section>
+
+      {/* Video Demonstration Section with Full Level Player */}
+      {product.videoSrc && (
+        <section className="pb-12 bg-surface">
+          <div className="mx-auto max-w-4xl px-4 sm:px-6">
+            <div className="relative aspect-video rounded-3xl overflow-hidden shadow-2xl border border-hairline/60 bg-bg p-px">
+              <SmartVideo 
+                src={product.videoSrc}
+                className="w-full h-full rounded-[22px]"
+                showControls={true}
+              />
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Main Details Section */}
       <section className="py-16 md:py-24 border-t border-hairline/40">
