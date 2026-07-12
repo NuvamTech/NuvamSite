@@ -430,17 +430,6 @@ export function SinglePage() {
         })}
       </section>
 
-      {/* ── STATS COUNTERS ─────────────────────────────────────────────── */}
-      <section className="py-12 md:py-16 border border-hairline/80 bg-surface/50 text-ink rounded-[2rem] px-8 md:px-14 shadow-xl my-6 backdrop-blur-xs">
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-          {siteCopy.stats.map((s, i) => (
-            <div key={i} className="text-center md:text-left space-y-2">
-              <p className="text-3xl md:text-4xl font-display font-extrabold brand-grad-text">{s.value}</p>
-              <p className="text-xs text-muted leading-relaxed uppercase tracking-wider">{s.label}</p>
-            </div>
-          ))}
-        </div>
-      </section>
 
       {/* ── #contact: CONTACT FORM ─────────────────────────────────────── */}
       <section id="contact" className="scroll-mt-20 pt-6 pb-12 md:pt-8 md:pb-16 border-t border-hairline/40 relative overflow-hidden">
